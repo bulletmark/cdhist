@@ -25,9 +25,20 @@ all:
 install:
 	install -D $(PROG) $(DEST)/bin/$(PROG)
 	install -m 644 -D $(RC) $(DEST)/etc/$(RC)
+	@echo
 	@echo "Now add \"source $(DEST)/etc/$(RC)\" to your ~/.bashrc."
+	@echo
+
+uninstall:
+	rm -f $(DEST)/bin/$(PROG)
+	rm -f $(DEST)/etc/$(RC)
+	@echo
+	@echo "Remove \"source $(DEST)/etc/$(RC)\" from your ~/.bashrc."
+	@echo
 
 home:
 	install -D $(PROG) $(HOME)/bin/$(PROG)
 	install -m 644 -D $(RC) $(HOME)/etc/.$(RC)
+	@echo
 	@echo "Now add \"source ~/.$(RC)\" to your ~/.bashrc."
+	@echo
