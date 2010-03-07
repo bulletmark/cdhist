@@ -1,10 +1,10 @@
-## DESCRIPTION
+### DESCRIPTION
 
 This script + bashrc file provides a bash directory stack "cd history"
 function. The bash function intercepts normal shell cd commands to
 keep a stack of previous directories.
 
-## USAGE
+### USAGE
 
     cd somepath  : Add "somepath" to your directory stack and cd there.
     cd -l        : List the current stack and its indices.
@@ -15,7 +15,7 @@ keep a stack of previous directories.
 
 All other arguments are passed on to the normal cd command.
 
-## INSTALLATION
+### INSTALLATION
 
 Requires bash + python 2.x or later. Just type the following to install.
 
@@ -38,7 +38,7 @@ You can install these to your home area if you prefer.
 Just ensure that CDHISTPROG_ in the bashrc_cdhist file points to
 cdhist.py.
 
-## LICENSE
+### LICENSE
 
 Copyright (C) 2010 Mark Blakeney. This program is distributed under the
 terms of the GNU General Public License.
