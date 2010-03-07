@@ -21,9 +21,9 @@ Requires bash + python 2.x or later. Just type the following to install.
 
     sudo make install
 
-and then each user who wants to use the cdhist facility should source
-the bashrc_cdhist file into their bashrc, i.e from within ~/.bashrc just
-add a line:
+Each user who wants to use the cdhist facility should source the
+bashrc_cdhist file into their bashrc, i.e from within ~/.bashrc just add
+a line:
 
     source /usr/local/etc/bashrc_cdhist
 
