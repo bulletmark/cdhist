@@ -18,7 +18,8 @@ All other arguments are passed on to the normal cd command.
 
 ### INSTALLATION
 
-Requires bash + python 2.x or later. Just type the following to install.
+Requires bash + python 2.x or later (not python 3.x). Just type the
+following to install.
 
     sudo make install
 
@@ -33,7 +34,7 @@ Then log out and back in again.
 In detail, make install merely installs the following files:
 
     /usr/local/etc/bashrc_cdhist
-    /usr/local/bin/cdhist.py.
+    /usr/local/bin/cdhist.py
 
 You can install these to your home area if you prefer.
 Just ensure that CDHISTPROG_ in the bashrc_cdhist file points to
