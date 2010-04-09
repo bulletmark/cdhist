@@ -59,7 +59,7 @@ def writeHist(hist):
         fd.write('\n'.join(hist) + '\n')
         fd.close()
     except IOError:
-        return
+        pass
 
 def readHist():
     '''Read the history stack from the history file'''
@@ -68,15 +68,9 @@ def readHist():
         hist = [d.rstrip('\n') for d in fd]
         fd.close()
     except IOError:
-        try:
-            # No file, make a new one and ensure correct mode.
-            fd = open(CDHISTFILE, 'w')
-            fd.close()
-            os.chmod(CDHISTFILE, 0600)
-        except IOError:
-            pass
-
-        return []
+        # No file, make a new one
+        hist = []
+        writeHist(hist)
 
     return hist
 
@@ -133,6 +127,9 @@ def main():
 
     # Open the user's tty so we can send him messages
     tty = open('/dev/tty', 'w')
+
+    # Ensure private history file
+    os.umask(0177)
 
     # Check arguments
     if len(sys.argv) <= 1:
