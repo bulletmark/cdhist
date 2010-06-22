@@ -20,7 +20,7 @@
 
 '''A directory stack "cd history" function'''
 
-import os, sys
+import os, sys, re
 
 # Default size of history (CDHISTSIZE + 0). Can be overridden by setting
 # this as an environment variable.
@@ -41,7 +41,7 @@ Usage examples:
 cd somepath   : Add "somepath" to your directory stack and cd there.
 cd -l         : List the current stack and its indices.
 cd -n         : cd to stack index "n".
-cd -/string   : Search back through stack for "string" and cd there.
+cd -/string   : Search back through stack for REGEXP "string" and cd there.
 cd --         : List the stack and its indices then prompt for dir to select.
 cd -h|?       : Print this help.
 All other arguments are passed on to the normal cd command.
@@ -109,7 +109,7 @@ def selectHist(hist, num, tty):
 def searchHist(hist, text, tty):
     '''Search back for text in stack and select directory if found'''
     for dir in hist[1:]:
-        if text in dir:
+        if re.search(text, dir):
             return dir
 
     tty.write('String "%s" not found\n' % text)
@@ -199,7 +199,7 @@ def main():
         # Select this directory index
         print selectHist(fetchHist(), int(arg[1:], 10), tty)
     elif arg[:2] == '-/':
-        # Search stack for "string" and select that dir
+        # Search stack for REGEXP "string" and select that dir
         print searchHist(fetchHist(), arg[2:], tty)
     else:
         # Fall through to real 'cd' to deal with normal dir
