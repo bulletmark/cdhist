@@ -10,7 +10,7 @@ listed and quickly jumped to.
     cd somepath  : Add "somepath" to your directory stack and cd there.
     cd -l        : List the current stack and its indices.
     cd -n        : cd to stack index "n".
-    cd -/string  : Search back through stack for "string" and cd there.
+    cd -/string  : Search back through stack for REGEXP "string" and cd there.
     cd --        : List the stack and its indices then prompt for dir to select.
     cd -h|?      : Print this help.
 
@@ -18,7 +18,7 @@ All other arguments are passed on to the normal cd command.
 
 ### INSTALLATION
 
-Requires bash + python 2.x or later (not python 3.x). Just type the
+Requires bash + python 2.x or later (not python 3.x yet). Just type the
 following to install.
 
     sudo make install
