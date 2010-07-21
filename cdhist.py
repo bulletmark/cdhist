@@ -33,9 +33,8 @@ if CDHISTTILDE and not CDHISTTILDE.lower().startswith('true'):
     CDHISTTILDE = None
 
 HELP = '''\
-A simple "cd history" function which intercepts the normal shell cd
-command to keep a stack of previous directories. Called from
-/usr/local/etc/bashrc_cdhist which is sourced into ~/.bashrc.
+A simple "cd history" function which intercepts your shell "cd"
+command to maintain a stack of directories visited.
 
 Usage examples:
 cd somepath   : Add "somepath" to your directory stack and cd there.

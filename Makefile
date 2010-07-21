@@ -20,7 +20,7 @@ PROG = cdhist.py
 RC = bashrc_cdhist
 
 all:
-	@echo "Type make install or make user"
+	@echo "Type make install or make home"
 
 install:
 	install -D $(PROG) $(DEST)/bin/$(PROG)
@@ -38,7 +38,8 @@ uninstall:
 
 home:
 	install -D $(PROG) $(HOME)/bin/$(PROG)
-	install -m 644 -D $(RC) $(HOME)/etc/.$(RC)
+	@echo "installing $(RC) to ~/.$(RC) and modifying path"
+	@sed 's#^\(CDHISTPROG_=\).*$$#\1"$$HOME/bin/cdhist.py"#' $(RC) >~/.$(RC)
 	@echo
 	@echo "Now add \"source ~/.$(RC)\" to your ~/.bashrc."
 	@echo

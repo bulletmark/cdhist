@@ -1,9 +1,9 @@
 ## BASH CD HISTORY
 
-This script + bashrc file provides a bash directory "cd history" stack.
-The bash function calls a python helper script to intercept normal shell
-cd commands and maintain a stack of previous directories which can be
-listed and quickly jumped to.
+This script + bashrc file provides a bash directory **cd history** stack.
+The bash function calls a python helper script to intercept your shell
+**cd** command and maintain a stack of directories visited which can be
+listed and quickly jumped to by numeric index.
 
 ### USAGE
 
