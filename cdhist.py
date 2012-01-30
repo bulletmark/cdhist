@@ -67,9 +67,8 @@ def readHist():
         hist = [d.rstrip('\n') for d in fd]
         fd.close()
     except IOError:
-        # No file, make a new one
+        # No file, assume empty history
         hist = []
-        writeHist(hist)
 
     return hist
 
