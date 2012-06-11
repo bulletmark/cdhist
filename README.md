@@ -31,25 +31,33 @@ a line:
 
 Then log out and back in again.
 
-In detail, make install merely installs the following files:
+In detail, make install merely installs the following system wide files:
 
     /usr/local/etc/bashrc_cdhist
     /usr/local/bin/cdhist.py
 
-You can install these to your home area if you prefer.
-Just ensure that CDHISTPROG_ in the bashrc_cdhist file points to
-cdhist.py.
+You can install these personally to your home area only if you prefer,
+just type:
+
+    make install
+
+Which installs the following personal files:
+
+    $HOME/.bashrc_cdhist
+    $HOME/bin/cdhist.py
+
+Then add the following to your ~/.bashrc:
+
+    source ~/.bashrc_cdhist
 
 ### LICENSE
 
-Copyright (C) 2010 Mark Blakeney. This program is distributed under the
+Copyright (C) 2010, 2012 Mark Blakeney. This program is distributed under the
 terms of the GNU General Public License.
-
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
 Free Software Foundation, either version 3 of the License, or any later
 version.
-
 This program is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
