@@ -20,7 +20,7 @@
 
 '''A directory stack "cd history" function'''
 
-import os, sys, re
+import os, sys
 
 # Default size of history (CDHISTSIZE + 0). Can be overridden by setting
 # this as an environment variable.
@@ -107,7 +107,7 @@ def selectHist(hist, num, tty):
 def searchHist(hist, text, tty):
     '''Search back for text in stack and select directory if found'''
     for dir in hist[1:]:
-        if re.search(text, dir):
+        if text in dir:
             return dir
 
     tty.write('String "%s" not found\n' % text)
