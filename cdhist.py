@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 #
 # A bash directory stack "cd history" function.
 #
@@ -20,6 +20,7 @@
 
 '''A directory stack "cd history" function'''
 
+from __future__ import print_function
 import os, sys
 
 # Default size of history (CDHISTSIZE + 0). Can be overridden by setting
@@ -127,7 +128,7 @@ def main():
     tty = open('/dev/tty', 'w')
 
     # Ensure private history file
-    os.umask(0177)
+    os.umask(0o177)
 
     # Check arguments
     if len(sys.argv) <= 1:
@@ -151,7 +152,7 @@ def main():
         arg = sys.argv[2]
     else:
         # Not sure what is being given here but let cd deal with it
-        print ' '.join(sys.argv[2:])
+        print(' '.join(sys.argv[2:]))
         sys.exit(2)
 
     # List directory stack?
@@ -181,7 +182,7 @@ def main():
 
             if num and num.isdigit():
                 # Select the index given by the user
-                print selectHist(hist, int(num, 10), tty)
+                print(selectHist(hist, int(num, 10), tty))
                 sys.exit(0)
 
         sys.exit(1)
@@ -192,16 +193,16 @@ def main():
     elif arg == '-':
         # A normal shell can't cd to OLDPWD when it is not set (e.g.
         # just after login). But we may have more history so use it :)
-        print selectHist(fetchHist(), 1, tty)
+        print(selectHist(fetchHist(), 1, tty))
     elif arg[0] == '-' and arg[1:].isdigit():
         # Select this directory index
-        print selectHist(fetchHist(), int(arg[1:], 10), tty)
+        print(selectHist(fetchHist(), int(arg[1:], 10), tty))
     elif arg[:2] == '-/':
         # Search stack for REGEXP "string" and select that dir
-        print searchHist(fetchHist(), arg[2:], tty)
+        print(searchHist(fetchHist(), arg[2:], tty))
     else:
         # Fall through to real 'cd' to deal with normal dir
-        print arg
+        print(arg)
 
     sys.exit(0)
 

@@ -18,8 +18,8 @@ All other arguments are passed on to the normal cd command.
 
 ### INSTALLATION
 
-Requires bash + python 2.x or later (not python 3.x yet). Just type the
-following to install.
+Requires bash + python 2.6 or later (and is compatible with python 3+).
+Just type the following to install.
 
     sudo make install
 
