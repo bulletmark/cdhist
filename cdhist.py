@@ -55,18 +55,16 @@ CDHISTFILE = os.path.join(HOME, '.cd_history')
 def writeHist(hist):
     '''Write the passed history stack to the history file'''
     try:
-        fd = open(CDHISTFILE, 'w')
-        fd.write('\n'.join(hist) + '\n')
-        fd.close()
+        with open(CDHISTFILE, 'w') as fd:
+            fd.write('\n'.join(hist) + '\n')
     except IOError:
         pass
 
 def readHist():
     '''Read the history stack from the history file'''
     try:
-        fd = open(CDHISTFILE, 'r')
-        hist = [d.rstrip('\n') for d in fd]
-        fd.close()
+        with open(CDHISTFILE, 'r') as fd:
+            hist = [d.rstrip('\n') for d in fd]
     except IOError:
         # No file, assume empty history
         hist = []
