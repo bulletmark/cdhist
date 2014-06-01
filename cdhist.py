@@ -88,9 +88,7 @@ def fetchHist():
     # same because the shell allows this so we must too. The stack will
     # accumulate all directories traversed across all coexisting
     # terminal sessions.
-    hist = readHist()
-    for dir in pwd:
-        hist[:] = [d for d in hist if d != dir]
+    hist = [d for d in readHist() if d not in pwd]
 
     # Return the stack, constraining its size
     return (pwd + hist)[:CDHISTSIZE]
