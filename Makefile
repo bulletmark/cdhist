@@ -1,4 +1,4 @@
-# Copyright (C) 2012 Mark Blakeney, markb@berlios.de. This program is
+# Copyright (C) 2013 Mark Blakeney, markb@berlios.de. This program is
 # distributed under the terms of the GNU General Public License.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -17,13 +17,13 @@ DOC = README.md
 DOCOUT = $(DOC:.md=.html)
 
 all:
-	@echo "Type make install or uninstall"
+	@echo "Type sudo make install|uninstall"
 
 install:
-	@./install.sh
+	@./cdhist-setup -d "$(DESTDIR)" install
 
 uninstall:
-	@./install.sh -r
+	@./cdhist-setup -d "$(DESTDIR)" uninstall
 
 doc:	$(DOCOUT)
 

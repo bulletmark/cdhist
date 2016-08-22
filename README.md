@@ -18,37 +18,51 @@ All other arguments are passed on to the normal cd command.
 
 ### INSTALLATION
 
+NOTE: Arch users can just install
+[_cdhist from the AUR_](https://aur.archlinux.org/packages/cdhist/) and
+skip to the next section.
+
 Requires bash + python 2.6 or later (and is compatible with python 3+).
 Just type the following to install.
 
+    git clone http://github.com/bulletmark/cdhist
+    cd cdhist
     sudo make install
-
-Each user who wants to use the cdhist facility should source the
-bashrc_cdhist file into their bashrc, i.e from within ~/.bashrc just add
-a line:
-
-    source /usr/local/etc/bashrc_cdhist
-
-Then log out and back in again.
 
 In detail, make install merely installs the following system wide files:
 
-    /usr/local/etc/bashrc_cdhist
-    /usr/local/bin/cdhist.py
+    /usr/bin/cdhist
+    /etc/cdhist.bashrc
 
-You can install these personally to your home area only if you prefer,
-just type:
+### CONFIGURATION
 
-    make install
+Each user who wants to use the cdhist facility should source the
+`/etc/cdhist.bashrc` file into their bashrc, i.e in `~/.bashrc`
+just add:
 
-Which installs the following personal files:
+    if [ -f /etc/cdhist.bashrc]; then
+	source /etc/cdhist.bashrc
+    fi
 
-    $HOME/.bashrc_cdhist
-    $HOME/bin/cdhist.py
+Then log out and back in again.
 
-Then add the following to your ~/.bashrc:
+NOTE: _cdhist_ now installs system-wide but old versions installed
+as local user files so to ensure that any old user configuration is
+removed type the following as your normal user (i.e. not sudo/root).
 
-    source ~/.bashrc_cdhist
+    cdhist-setup clean
+
+You can type this any time so no harm is done running it to make sure.
+
+### UPGRADE
+
+    cd cdhist  # Source dir, as above
+    git pull
+    sudo make install
+
+### REMOVAL
+
+    sudo cdhist-setup uninstall
 
 ### LICENSE
 
