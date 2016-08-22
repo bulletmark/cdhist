@@ -41,7 +41,7 @@ Each user who wants to use the cdhist facility should source the
 just add:
 
     if [ -f /etc/cdhist.bashrc]; then
-	source /etc/cdhist.bashrc
+        source /etc/cdhist.bashrc
     fi
 
 Then log out and back in again.
