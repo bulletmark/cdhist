@@ -6,7 +6,8 @@ a python helper script to intercept your normal shell `cd` command and
 maintain a stack of directories you previously visited which can be
 listed and quickly jumped to by numeric index.
 
-The latest version is available at http://github.com/bulletmark/cdhist.
+The latest version and documentation is available at
+http://github.com/bulletmark/cdhist.
 
 ### USAGE
 
