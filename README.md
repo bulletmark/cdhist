@@ -1,18 +1,38 @@
 ## BASH CD HISTORY
 
-This script + bashrc file provides a bash directory **cd history** stack.
-The bash function calls a python helper script to intercept your shell
-**cd** command and maintain a stack of directories visited which can be
+[cdhist](http://github.com/bulletmark/cdhist) is a utility which
+provides a bash **cd history** directory stack. A bash `cd` alias calls
+a python helper script to intercept your normal shell `cd` command and
+maintain a stack of directories you previously visited which can be
 listed and quickly jumped to by numeric index.
+
+The latest version is available at http://github.com/bulletmark/cdhist.
 
 ### USAGE
 
-    cd somepath  : Add "somepath" to your directory stack and cd there.
-    cd -l        : List the current stack and its indices.
-    cd -n        : cd to stack index "n".
-    cd -/string  : Search back through stack for "string" and cd there.
-    cd --        : List the stack and its indices then prompt for dir to select.
-    cd -h|?      : Print this help.
+Add "somepath" to your directory stack and cd there:
+
+    cd somepath
+
+List the current stack and its indices:
+
+    cd -l
+
+Change dir to stack index "n":
+
+    cd -n
+
+Search back through stack for "string" and cd there:
+
+    cd -/string
+
+List the stack and its indices then immediately prompt for dir to select:
+
+    cd --
+
+Show this help:
+
+    cd -h|?
 
 All other arguments are passed on to the normal cd command.
 
