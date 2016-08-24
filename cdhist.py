@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-#
-# A bash directory stack "cd history" function.
+'''A bash directory stack "cd history" function'''
 #
 # Copyright (C) 2010 Mark Blakeney, markb@berlios.de. This program is
 # distributed under the terms of the GNU General Public License.
@@ -16,9 +15,7 @@
 # General Public License at <http://www.gnu.org/licenses/> for more
 # details.
 #
-# See help text below and the accompanying bashrc_cdhist and README.
-
-'''A directory stack "cd history" function'''
+# See help text below and accompanying README.
 
 from __future__ import print_function
 import os, sys
