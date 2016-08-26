@@ -52,7 +52,7 @@ Just type the following to install.
 
 In detail, make install merely installs the following system wide files:
 
-    /usr/bin/cdhist
+    /usr/bin/cdhist.py
     /etc/cdhist.bashrc
 
 ### CONFIGURATION
