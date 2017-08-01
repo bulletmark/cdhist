@@ -1,6 +1,6 @@
 #!/bin/bash
 # User setup script.
-# (C) Mark Blakeney, markb@berlios.de, Aug 2016.
+# (C) Mark Blakeney, Aug 2016.
 
 PROG="$(basename $0)"
 NAME=${PROG%-*}
