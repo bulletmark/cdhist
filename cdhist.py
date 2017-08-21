@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-'''A bash directory stack "cd history" function'''
+'A bash directory stack "cd history" function'
 #
 # Copyright (C) 2010 Mark Blakeney. This program is distributed under
 # the terms of the GNU General Public License.
@@ -42,15 +42,15 @@ cd -/string   : Search back through stack for REGEXP "string" and cd there.
 cd --         : List the stack and its indices then prompt for dir to select.
 cd -h|?       : Print this help.
 All other arguments are passed on to the normal cd command.
-Environment   : You have CDHISTSIZE=%d, CDHISTTILDE=%s.
-''' % (CDHISTSIZE, CDHISTTILDE)
+Environment   : You have CDHISTSIZE={}, CDHISTTILDE={}.
+'''.format(CDHISTSIZE, CDHISTTILDE)
 
 # Constants and definitions
 HOME = os.path.expanduser('~')
 CDHISTFILE = os.path.join(HOME, '.cd_history')
 
 def writeHist(hist):
-    '''Write the passed history stack to the history file'''
+    'Write the passed history stack to the history file'
     try:
         with open(CDHISTFILE, 'w') as fd:
             fd.write('\n'.join(hist) + '\n')
@@ -58,7 +58,7 @@ def writeHist(hist):
         pass
 
 def readHist():
-    '''Read the history stack from the history file'''
+    'Read the history stack from the history file'
     try:
         with open(CDHISTFILE, 'r') as fd:
             hist = [d.rstrip('\n') for d in fd]
@@ -69,7 +69,7 @@ def readHist():
     return hist
 
 def fetchHist():
-    '''Update and return the current history stack'''
+    'Update and return the current history stack'
 
     # Get current and prev dirs
     pwd = [os.environ.get('PWD') or os.getcwd()]
@@ -91,25 +91,24 @@ def fetchHist():
     return (pwd + hist)[:CDHISTSIZE]
 
 def selectHist(hist, num, tty):
-    '''Bounds check the entered index and select directory if in range'''
+    'Bounds check the entered index and select directory if in range'
     if num < 0 or num >= len(hist):
-        tty.write('cd history number %d out of range\n' % num)
+        tty.write('cd history number {} out of range\n'.format(num))
         sys.exit(1)
 
     return hist[num]
 
 def searchHist(hist, text, tty):
-    '''Search back for text in stack and select directory if found'''
+    'Search back for text in stack and select directory if found'
     for dir in hist[1:]:
         if text in dir:
             return dir
 
-    tty.write('String "%s" not found\n' % text)
+    tty.write('String "{}" not found\n'.format(text))
     sys.exit(1)
 
 def main():
-    '''Main code'''
-
+    'Main code'
     # Main returns a directory name to cd to (as a string). Also returns
     # a status code:
     #
@@ -156,13 +155,13 @@ def main():
 
         # List the directory stack (in reversed output)
         n = len(hist)
-        for dir in hist[::-1]:
+        for dird in reversed(hist):
 
-            if CDHISTTILDE and dir.startswith(HOME):
-                dir = dir.replace(HOME, '~', 1)
+            if CDHISTTILDE and dird.startswith(HOME):
+                dird = dird.replace(HOME, '~', 1)
 
             n -= 1
-            tty.write('%3d %s\n' % (n, dir))
+            tty.write('{:3} {}\n'.format(n, dird))
 
         if arg == '--':
             # Prompt for index from the screen
