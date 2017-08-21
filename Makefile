@@ -30,5 +30,8 @@ doc:	$(DOCOUT)
 $(DOCOUT): $(DOC)
 	markdown $< >$@
 
+check:
+	flake8 cdhist.py
+
 clean:
 	rm -rf $(DOCOUT)

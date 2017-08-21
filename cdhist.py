@@ -42,7 +42,7 @@ cd -/string   : Search back through stack for REGEXP "string" and cd there.
 cd --         : List the stack and its indices then prompt for dir to select.
 cd -h|?       : Print this help.
 All other arguments are passed on to the normal cd command.
-Environment   : You have CDHISTSIZE=%d, CDHISTTILDE=%s
+Environment   : You have CDHISTSIZE=%d, CDHISTTILDE=%s.
 ''' % (CDHISTSIZE, CDHISTTILDE)
 
 # Constants and definitions
