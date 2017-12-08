@@ -36,7 +36,7 @@ function cd_
     # Call the worker script to process the argument. The script will
     # return a (possibly different) string argument and a status to
     # indicate whether to proceed with the 'cd' or not.
-    _d=`$CDHISTPROG_ -- "$@"`
+    _d=$($CDHISTPROG_ -- "$@")
     _r=$?
 
     if [ $_r -eq 1 ]; then
