@@ -51,6 +51,11 @@ if [ $cmd = "install" -o $cmd = "uninstall" ]; then
 	install -CDv -m 755 -t $DESTDIR$BINDIR $NAME.py
 	install -CDv -m 644 -t $DESTDIR$CNFDIR $NAME.bashrc
 	install -CDv -m 644 -t $DESTDIR$DOCDIR README.md
+
+	# Also install HTML file if markdown is available
+	if hash markdown &>/dev/null; then
+	    markdown README.md -o $DESTDIR$DOCDIR/README.html
+	fi
     else
 	rm -rfv $DESTDIR$BINDIR/$NAME.py
 	rm -rfv $DESTDIR$CNFDIR/$NAME.bashrc
