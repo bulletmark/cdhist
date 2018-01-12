@@ -48,7 +48,7 @@ Just type the following to install.
 
     git clone http://github.com/bulletmark/cdhist
     cd cdhist
-    sudo make install
+    sudo make install (or sudo ./cdhist-setup install)
 
 In detail, make install merely installs the following system wide files:
 
@@ -79,7 +79,7 @@ You can type this any time so no harm is done running it to make sure.
 
     cd cdhist  # Source dir, as above
     git pull
-    sudo make install
+    sudo make install (or sudo ./cdhist-setup install)
 
 ### REMOVAL
 
