@@ -54,7 +54,7 @@ if [ $cmd = "install" -o $cmd = "uninstall" ]; then
 
 	# Also install HTML file if markdown is available
 	if hash markdown &>/dev/null; then
-	    markdown README.md -o $DESTDIR$DOCDIR/README.html
+	    markdown -o $DESTDIR$DOCDIR/README.html README.md
 	fi
     else
 	rm -rfv $DESTDIR$BINDIR/$NAME.py
