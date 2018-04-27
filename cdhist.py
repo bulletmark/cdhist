@@ -140,12 +140,16 @@ def main():
 
     if len(sys.argv) <= 2:
         arg = HOME
-    elif len(sys.argv) == 3:
-        arg = sys.argv[2]
     else:
-        # Not sure what is being given here but let cd deal with it
-        print(' '.join(sys.argv[2:]))
-        sys.exit(2)
+        if sys.argv[2] == '--':
+            del sys.argv[2]
+
+        if len(sys.argv) == 3:
+            arg = sys.argv[2]
+        else:
+            # Not sure what is being given here but let cd deal with it
+            print(' '.join(sys.argv[2:]))
+            sys.exit(2)
 
     # List directory stack?
     if arg == '--' or arg == '-l':
