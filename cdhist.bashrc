@@ -27,7 +27,7 @@ export CDHISTTILDE=${CDHISTTILDE:=TRUE}
 # information (i.e. type "cd -h" after installation).
 
 # Location of the cdhist.py program.
-CDHISTPROG_="/usr/bin/cdhist.py"
+CDHISTPROG_="/usr/bin/cdhist"
 
 # Redefine user cd command for this session
 alias cd=cd_

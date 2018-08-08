@@ -1,9 +1,9 @@
-## BASH CD HISTORY
+## BASH SHELL CD HISTORY
 
 [cdhist](http://github.com/bulletmark/cdhist) is a utility which
-provides a bash **cd history** directory stack. A bash `cd` alias calls
-a python helper script to intercept your normal shell `cd` command and
-maintain a stack of directories you previously visited which can be
+provides a bash shell **cd history** directory stack. A bash `cd` alias
+calls a python helper script to intercept your normal shell `cd` command
+and maintain a stack of directories you previously visited which can be
 listed and quickly jumped to by numeric index.
 
 The latest version and documentation is available at
@@ -13,47 +13,57 @@ http://github.com/bulletmark/cdhist.
 
 Add "somepath" to your directory stack and cd there:
 
-    cd somepath
+```
+cd somepath
+```
 
 List the current stack and its indices:
 
-    cd -l
+```
+cd -l
+```
 
 Change dir to stack index "n":
 
-    cd -n
+```
+cd -n
+```
 
 Search back through stack for "string" and cd there:
 
-    cd -/string
+```
+cd -/string
+```
 
 List the stack and its indices then immediately prompt for dir to select:
 
-    cd --
+```
+cd --
+```
 
 Show this help:
 
-    cd -h|?
+```
+cd -h|?
+```
 
 All other arguments are passed on to the normal cd command.
 
 ### INSTALLATION
 
-NOTE: Arch users can just install
-[_cdhist from the AUR_](https://aur.archlinux.org/packages/cdhist/) and
-skip to the next section.
+Arch users can install [cdhist from the
+AUR](https://aur.archlinux.org/packages/cdhist/) and skip to the next
+section.
 
 Requires bash + python 2.6 or later (and is compatible with python 3+).
-Just type the following to install.
+Note [cdhist is on PyPI](https://pypi.org/project/cdhist/) so you can
+`sudo pip install cdhist` or:
 
-    git clone http://github.com/bulletmark/cdhist
-    cd cdhist
-    sudo make install (or sudo ./cdhist-setup install)
-
-In detail, make install merely installs the following system wide files:
-
-    /usr/bin/cdhist.py
-    /etc/cdhist.bashrc
+```
+git clone http://github.com/bulletmark/cdhist
+cd cdhist
+sudo make install
+```
 
 ### CONFIGURATION
 
@@ -61,29 +71,28 @@ Each user who wants to use the cdhist facility should source the
 `/etc/cdhist.bashrc` file into their bashrc, i.e in `~/.bashrc`
 just add:
 
-    if [ -f /etc/cdhist.bashrc]; then
-        source /etc/cdhist.bashrc
-    fi
+```
+if [ -f /etc/cdhist.bashrc]; then
+    source /etc/cdhist.bashrc
+fi
+```
 
 Then log out and back in again.
 
-NOTE: _cdhist_ now installs system-wide but old versions installed
-as local user files so to ensure that any old user configuration is
-removed type the following as your normal user (i.e. not sudo/root).
-
-    cdhist-setup clean
-
-You can type this any time so no harm is done running it to make sure.
-
 ### UPGRADE
 
-    cd cdhist  # Source dir, as above
-    git pull
-    sudo make install (or sudo ./cdhist-setup install)
+```
+cd cdhist  # Source dir, as above
+git pull
+sudo make install
+```
 
 ### REMOVAL
 
-    sudo cdhist-setup uninstall
+```
+cd cdhist  # Source dir, as above
+sudo make uninstall
+```
 
 ### LICENSE
 

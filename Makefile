@@ -1,4 +1,4 @@
-# Copyright (C) 2013 Mark Blakeney. This program is distributed under
+# Copyright (C) 2016 Mark Blakeney. This program is distributed under
 # the terms of the GNU General Public License.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -14,24 +14,27 @@
 
 DOC = README.md
 
+NAME = cdhist
 DOCOUT = $(DOC:.md=.html)
 
 all:
-	@echo "Type sudo make install|uninstall"
+	@echo "Type sudo make install|uninstall, or make doc|check|clean"
 
 install:
-	@./cdhist-setup -d "$(DESTDIR)" install
+	@python setup.py install --root=$(or $(DESTDIR),/) --optimize=1
 
 uninstall:
-	@./cdhist-setup -d "$(DESTDIR)" uninstall
+	@rm -vrf /usr/bin/$(NAME)* /etc/$(NAME)* \
+	    /usr/lib/python*/site-packages/*$(NAME)* \
+	    /usr/lib/python*/site-packages/*/*$(NAME)*
 
 doc:	$(DOCOUT)
+
+check:
+	flake8 $(NAME).py $(NAME) setup.py
 
 $(DOCOUT): $(DOC)
 	markdown $< >$@
 
-check:
-	flake8 cdhist.py
-
 clean:
-	rm -rf $(DOCOUT)
+	@rm -vrf $(DOCOUT) *.egg-info build/ dist/ __pycache__/
