@@ -17,6 +17,7 @@
 #
 # See help text below and accompanying README.
 
+# Make work with python 2 and 3
 from __future__ import print_function
 import os, sys
 
@@ -93,19 +94,21 @@ def fetchHist():
 def selectHist(hist, num, tty):
     'Bounds check the entered index and select directory if in range'
     if num < 0 or num >= len(hist):
-        tty.write('cd history number {} out of range\n'.format(num))
-        sys.exit(1)
+        tty.write('cdhist: number {} out of range\n'.format(num))
+        return 1
 
-    return hist[num]
+    print(hist[num])
+    return 0
 
 def searchHist(hist, text, tty):
     'Search back for text in stack and select directory if found'
     for dir in hist[1:]:
         if text in dir:
-            return dir
+            print(dir)
+            return 0
 
-    tty.write('String "{}" not found\n'.format(text))
-    sys.exit(1)
+    tty.write('cdhist: string "{}" not found\n'.format(text))
+    return 1
 
 def main():
     'Main code'
@@ -114,7 +117,6 @@ def main():
     #
     # 0 = Proceed with real cd command using the single argument provided.
     # 1 = Do not proceed. Just quit.
-    # 2 = Proceed using the multiple arguments provided.
 
     # Open the user's tty so we can send him messages
     tty = open('/dev/tty', 'w')
@@ -122,83 +124,81 @@ def main():
     # Ensure private history file
     os.umask(0o177)
 
-    # Check arguments
+    # Intercept home case immediately
     if len(sys.argv) <= 1:
-        tty.write('This program should be called from bashrc_cdhist\n')
-        sys.exit(1)
+        print(HOME)
+        return 0
 
-    # This may be a call to just update the directory history. I.e
-    # after a successfull shell 'cd'.
-    if sys.argv[1] == '-u':
-        writeHist(fetchHist())
-        sys.exit(0)
+    if len(sys.argv) == 2:
+        arg = sys.argv[1]
 
-    # Process the arguments
-    if sys.argv[1] != '--':
-        tty.write('Odd argument ' + sys.argv[1] + ' ?\n')
-        sys.exit(1)
+        # This may be a call to just update the directory history. I.e
+        # after a successfull shell 'cd'.
+        if arg == '-u':
+            writeHist(fetchHist())
+            return 0
 
-    if len(sys.argv) <= 2:
-        arg = HOME
-    elif len(sys.argv) == 3:
-        arg = sys.argv[2]
-    else:
-        # Not sure what is being given here but let cd deal with it
-        print(' '.join(sys.argv[2:]))
-        sys.exit(2)
+        # List directory stack?
+        if arg == '--' or arg == '-l':
 
-    # List directory stack?
-    if arg == '--' or arg == '-l':
+            # Fetch the current history
+            hist = fetchHist()
 
-        # Fetch the current history
-        hist = fetchHist()
+            # List the directory stack (in reversed output)
+            n = len(hist)
+            for dird in reversed(hist):
 
-        # List the directory stack (in reversed output)
-        n = len(hist)
-        for dird in reversed(hist):
+                if CDHISTTILDE and dird.startswith(HOME):
+                    dird = dird.replace(HOME, '~', 1)
 
-            if CDHISTTILDE and dird.startswith(HOME):
-                dird = dird.replace(HOME, '~', 1)
+                n -= 1
+                tty.write('{:3} {}\n'.format(n, dird))
 
-            n -= 1
-            tty.write('{:3} {}\n'.format(n, dird))
+            if arg == '--':
+                # Prompt for index from the screen
+                tty.write('Select directory index [or <enter> to quit]: ')
+                tty.flush()
+                try:
+                    num = int(sys.stdin.readline().strip(), 10)
+                except (KeyboardInterrupt, ValueError):
+                    pass
+                else:
+                    # Select the index given by the user
+                    return selectHist(hist, num, tty)
 
-        if arg == '--':
-            # Prompt for index from the screen
-            tty.write('Select directory index [or <enter> to quit]: ')
-            tty.flush()
-            try:
-                num = sys.stdin.readline().strip()
-            except KeyboardInterrupt:
-                sys.exit(0)
+            return 1
 
-            if num and num.isdigit():
-                # Select the index given by the user
-                print(selectHist(hist, int(num, 10), tty))
-                sys.exit(0)
+        if arg == '-h' or arg == '-?':
+            # Just output help/usage
+            tty.write(HELP)
+            return 1
 
-        sys.exit(1)
-    elif arg == '-h' or arg == '-?':
-        # Just output help/usage
-        tty.write(HELP)
-        sys.exit(1)
-    elif arg == '-':
-        # A normal shell can't cd to OLDPWD when it is not set (e.g.
-        # just after login). But we may have more history so use it :)
-        print(selectHist(fetchHist(), 1, tty))
-    elif arg[0] == '-' and arg[1:].isdigit():
-        # Select this directory index
-        print(selectHist(fetchHist(), int(arg[1:], 10), tty))
-    elif arg[:2] == '-/':
-        # Search stack for REGEXP "string" and select that dir
-        print(searchHist(fetchHist(), arg[2:], tty))
-    else:
-        # Fall through to real 'cd' to deal with normal dir
-        print(arg)
+        if arg == '-':
+            # A normal shell can't cd to OLDPWD when it is not set (e.g.
+            # just after login). But we may have more history so use it :)
+            return selectHist(fetchHist(), 1, tty)
 
-    sys.exit(0)
+        if len(arg) > 1:
+            if arg[0] == '-' and arg[1:].isdigit():
+                # Select this directory index
+                return selectHist(fetchHist(), int(arg[1:], 10), tty)
+
+            if arg[:2] == '-/':
+                # Search stack for REGEXP "string" and select that dir
+                return searchHist(fetchHist(), arg[2:], tty)
+
+    elif sys.argv[1] == '--':
+        del sys.argv[1]
+
+    if sys.argv[1].startswith('-'):
+        tty.write('cdhist: cd command options are not supported\n')
+        return 1
+
+    # Fall through to real 'cd' to deal with normal dir
+    print(' '.join(sys.argv[1:]))
+    return 0
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
 
 # vim: se et:

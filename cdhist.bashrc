@@ -36,20 +36,15 @@ function cd_
     # Call the worker script to process the argument. The script will
     # return a (possibly different) string argument and a status to
     # indicate whether to proceed with the 'cd' or not.
-    _d=$($CDHISTPROG_ -- "$@")
-    _r=$?
+    _d="$($CDHISTPROG_ "$@")"
 
-    if [ $_r -eq 1 ]; then
+    if [ $? -eq 1 ]; then
 	return 0
-    elif [ $_r -eq 0 ]; then
-	'cd' "$_d"
-    else
-	'cd' $_d
     fi
 
-    # If the 'cd' was successful then call the script again merely so it
+    # If the 'cd' is successful then call the script again merely so it
     # can record the new working directory in the history stack.
-    if [ $? -eq 0 ]; then
+    if 'cd' "$_d"; then
 	$CDHISTPROG_ -u
     fi
 

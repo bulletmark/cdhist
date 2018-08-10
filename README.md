@@ -62,6 +62,7 @@ Note [cdhist is on PyPI](https://pypi.org/project/cdhist/) so you can
 ```
 git clone http://github.com/bulletmark/cdhist
 cd cdhist
+sudo make uninstall # Do this to make sure old versions are purged
 sudo make install
 ```
 
