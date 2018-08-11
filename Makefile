@@ -28,6 +28,12 @@ uninstall:
 	    /usr/lib/python*/site-packages/*$(NAME)* \
 	    /usr/lib/python*/site-packages/*/*$(NAME)*
 
+sdist:
+	python setup.py sdist
+
+upload: sdist
+	twine upload dist/*
+
 doc:	$(DOCOUT)
 
 check:
