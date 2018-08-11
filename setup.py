@@ -1,24 +1,23 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 # Setup script to install this package.
 # M.Blakeney, Mar 2018.
 
-import re, stat
-from pathlib import Path
+import re, os
 from setuptools import setup
 
-here = Path(__file__).resolve().parent
-name = re.sub(r'-\d+\.\d+.*', '', here.name)
+here = os.path.dirname(os.path.abspath(__file__))
+fullname = os.path.basename(here)
+name = re.sub(r'-\d+\.\d+.*', '', fullname)
 module = re.sub('-', '_', name)
-readme = here.joinpath('README.md').read_text()
-executable = stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH
+readme = open(os.path.join(here, 'README.md')).read()
 
 setup(
     name=name,
-    version='1.4.2',
+    version='1.5.1',
     description='Program to provide a bash cd history directory stack',
     long_description=readme,
     long_description_content_type="text/markdown",
-    url=f'https://github.com/bulletmark/{name}',
+    url='https://github.com/bulletmark/{}'.format(name),
     author='Mark Blakeney',
     author_email='mark@irsaere.net',
     keywords='vim gvim',
@@ -29,9 +28,9 @@ setup(
         'Programming Language :: Python :: 3',
     ],
     data_files=[
-        (f'share/doc/{name}', ['README.md']),
-        (f'/etc', [f'{name}.bashrc']),
+        ('share/doc/{}'.format(name), ['README.md']),
+        ('/etc', ['{}.bashrc'.format(name)]),
     ],
-    scripts=[f.name for f in here.iterdir()
-        if f.is_file() and f.stat().st_mode & executable]
+    scripts=[f for f in os.listdir(here)
+        if os.path.isfile(f) and os.access(f, os.X_OK)]
 )
