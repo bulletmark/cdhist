@@ -129,70 +129,71 @@ def main():
         print(HOME)
         return 0
 
-    if len(sys.argv) == 2:
-        arg = sys.argv[1]
+    if sys.argv[1][0] == '-':
+        # Look for and process cdhist option
+        if len(sys.argv) == 2:
+            arg = sys.argv[1]
 
-        # This may be a call to just update the directory history. I.e
-        # after a successfull shell 'cd'.
-        if arg == '-u':
-            writeHist(fetchHist())
-            return 0
+            # This may be a call to just update the directory history. I.e
+            # after a successfull shell 'cd'.
+            if arg == '-u':
+                writeHist(fetchHist())
+                return 0
 
-        # List directory stack?
-        if arg == '--' or arg == '-l':
+            # List directory stack?
+            if arg == '--' or arg == '-l':
 
-            # Fetch the current history
-            hist = fetchHist()
+                # Fetch the current history
+                hist = fetchHist()
 
-            # List the directory stack (in reversed output)
-            n = len(hist)
-            for dird in reversed(hist):
+                # List the directory stack (in reversed output)
+                n = len(hist)
+                for dird in reversed(hist):
 
-                if CDHISTTILDE and dird.startswith(HOME):
-                    dird = dird.replace(HOME, '~', 1)
+                    if CDHISTTILDE and dird.startswith(HOME):
+                        dird = dird.replace(HOME, '~', 1)
 
-                n -= 1
-                tty.write('{:3} {}\n'.format(n, dird))
+                    n -= 1
+                    tty.write('{:3} {}\n'.format(n, dird))
 
-            if arg == '--':
-                # Prompt for index from the screen
-                tty.write('Select directory index [or <enter> to quit]: ')
-                tty.flush()
-                try:
-                    num = int(sys.stdin.readline().strip(), 10)
-                except (KeyboardInterrupt, ValueError):
-                    pass
-                else:
-                    # Select the index given by the user
-                    return selectHist(hist, num, tty)
+                if arg == '--':
+                    # Prompt for index from the screen
+                    tty.write('Select directory index [or <enter> to quit]: ')
+                    tty.flush()
+                    try:
+                        num = int(sys.stdin.readline().strip(), 10)
+                    except (KeyboardInterrupt, ValueError):
+                        pass
+                    else:
+                        # Select the index given by the user
+                        return selectHist(hist, num, tty)
 
+                return 1
+
+            if arg == '-h' or arg == '-?':
+                # Just output help/usage
+                tty.write(HELP)
+                return 1
+
+            if arg == '-':
+                # A normal shell can't cd to OLDPWD when it is not set (e.g.
+                # just after login). But we may have more history so use it :)
+                return selectHist(fetchHist(), 1, tty)
+
+            if len(arg) > 1:
+                if arg[1:].isdigit():
+                    # Select this directory index
+                    return selectHist(fetchHist(), int(arg[1:], 10), tty)
+
+                if arg[:2] == '-/':
+                    # Search stack for REGEXP "string" and select that dir
+                    return searchHist(fetchHist(), arg[2:], tty)
+
+        if sys.argv[1] == '--':
+            del sys.argv[1]
+        else:
+            tty.write('cdhist: cd command options are not supported\n')
             return 1
-
-        if arg == '-h' or arg == '-?':
-            # Just output help/usage
-            tty.write(HELP)
-            return 1
-
-        if arg == '-':
-            # A normal shell can't cd to OLDPWD when it is not set (e.g.
-            # just after login). But we may have more history so use it :)
-            return selectHist(fetchHist(), 1, tty)
-
-        if len(arg) > 1:
-            if arg[0] == '-' and arg[1:].isdigit():
-                # Select this directory index
-                return selectHist(fetchHist(), int(arg[1:], 10), tty)
-
-            if arg[:2] == '-/':
-                # Search stack for REGEXP "string" and select that dir
-                return searchHist(fetchHist(), arg[2:], tty)
-
-    elif sys.argv[1] == '--':
-        del sys.argv[1]
-
-    if sys.argv[1].startswith('-'):
-        tty.write('cdhist: cd command options are not supported\n')
-        return 1
 
     # Fall through to real 'cd' to deal with normal dir
     print(' '.join(sys.argv[1:]))
