@@ -32,19 +32,19 @@ if CDHISTTILDE and not CDHISTTILDE.lower().startswith('true'):
     CDHISTTILDE = None
 
 HELP = '''\
-A simple "cd history" function which intercepts your shell "cd"
-command to maintain a stack of directories visited.
+A simple "cd history" function which intercepts (or can replace) your
+shell "cd" command to maintain a stack of directories visited.
 
 Usage examples:
-cd somepath   : Add "somepath" to your directory stack and cd there.
-cd -l         : List the current stack and its indices.
-cd -n         : cd to stack index "n".
-cd -/string   : Search back through stack for REGEXP "string" and cd there.
-cd --         : List the stack and its indices then prompt for dir to select.
-cd -h|?       : Print this help.
+$cmd somepath   : Add "somepath" to your directory stack and cd there.
+$cmd -l         : List the current stack and its indices.
+$cmd -n         : cd to stack index "n".
+$cmd -/string   : Search back through stack for REGEXP "string" and cd there.
+$cmd --         : List the stack and its indices then prompt for dir to select.
+$cmd -h|?       : Print this help.
 All other arguments are passed on to the normal cd command.
-Environment   : You have CDHISTSIZE={}, CDHISTTILDE={}.
-'''.format(CDHISTSIZE, CDHISTTILDE)
+Environment   : You have CDHISTSIZE=$size, CDHISTTILDE=$tilde.
+'''
 
 # Constants and definitions
 HOME = os.path.expanduser('~')
@@ -171,8 +171,11 @@ def main():
                 return 1
 
             if arg == '-h' or arg == '-?':
+                from string import Template
                 # Just output help/usage
-                tty.write(HELP)
+                tty.write(Template(HELP).substitute(
+                    cmd=os.environ.get('CDHISTCOMMAND', 'cd'),
+                    size=CDHISTSIZE, tilde=CDHISTTILDE))
                 return 1
 
             if arg == '-':

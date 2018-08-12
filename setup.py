@@ -13,7 +13,7 @@ readme = open(os.path.join(here, 'README.md')).read()
 
 setup(
     name=name,
-    version='1.5.2',
+    version='1.5.3',
     description='Program to provide a bash cd history directory stack',
     long_description=readme,
     long_description_content_type="text/markdown",

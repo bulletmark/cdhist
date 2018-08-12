@@ -30,7 +30,7 @@ export CDHISTTILDE=${CDHISTTILDE:=TRUE}
 CDHISTPROG_="/usr/bin/cdhist"
 
 # Redefine user cd command for this session
-alias cd=cd_
+alias ${CDHISTCOMMAND:-cd}=cd_
 function cd_
 {
     # Call the worker script to process the argument. The script will

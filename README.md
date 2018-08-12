@@ -80,6 +80,24 @@ fi
 
 Then log out and back in again.
 
+### ALTERNATIVE COMMAND NAME
+
+Some people may prefer not to alias their system `cd` command to this
+utility and just use an alternative unique command name. To do this, set
+`CDHISTCOMMAND` to your preferred name before you invoke the
+`cdhist.bashrc` script in your `~/.bashrc`. E.g, to use the command name
+`xd` rather than `cd`:
+
+```
+if [ -f /etc/cdhist.bashrc]; then
+    export CDHISTCOMMAND=xd
+    source /etc/cdhist.bashrc
+fi
+```
+
+Then just type `xd /tmp` to change dir, `xd --` to see and select dirs,
+etc.
+
 ### UPGRADE
 
 ```
