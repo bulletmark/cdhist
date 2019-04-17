@@ -35,11 +35,14 @@ Search back through stack for "string" and cd there:
 cd -/string
 ```
 
-List the stack and its indices then immediately prompt for dir to select:
+List the stack and its indices then immediately prompt for dir to
+select:
 
 ```
 cd --
 ```
+
+You can also type `/string` at the above prompt to search.
 
 Show this help:
 
@@ -54,6 +57,8 @@ All other arguments are passed on to the normal cd command.
 Arch users can install [cdhist from the
 AUR](https://aur.archlinux.org/packages/cdhist/) and skip to the next
 section.
+
+Requires `python-setuptools` installed.
 
 Requires bash + python 2.6 or later (and is compatible with python 3+).
 Note [cdhist is on PyPI](https://pypi.org/project/cdhist/) so you can

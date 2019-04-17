@@ -161,12 +161,20 @@ def main():
                     tty.write('Select directory index [or <enter> to quit]: ')
                     tty.flush()
                     try:
-                        num = int(sys.stdin.readline().strip(), 10)
-                    except (KeyboardInterrupt, ValueError):
-                        pass
-                    else:
-                        # Select the index given by the user
-                        return selectHist(hist, num, tty)
+                        line = sys.stdin.readline().strip()
+                    except KeyboardInterrupt:
+                        return 1
+
+                    if line and line[0] == '/':
+                        return searchHist(fetchHist(), line[1:], tty)
+
+                    try:
+                        num = int(line, 10)
+                    except ValueError:
+                        return 1
+
+                    # Select the index given by the user
+                    return selectHist(hist, num, tty)
 
                 return 1
 
