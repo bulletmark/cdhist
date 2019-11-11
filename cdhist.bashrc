@@ -23,11 +23,8 @@ export CDHISTSIZE=${CDHISTSIZE:=31}
 # displayed as a tilde ("~"). Else set FALSE, null, etc.
 export CDHISTTILDE=${CDHISTTILDE:=TRUE}
 
-# See help text in accompanying cdhist.py script for usage and more
+# See help text in accompanying cdhist script for usage and more
 # information (i.e. type "cd -h" after installation).
-
-# Name of the cdhist.py program.
-CDHISTPROG_="/usr/bin/cdhist"
 
 # Redefine user cd command for this session
 alias ${CDHISTCOMMAND:-cd}=cd_
@@ -36,7 +33,7 @@ function cd_
     # Call the worker script to process the argument. The script will
     # return a (possibly different) string argument and a status to
     # indicate whether to proceed with the 'cd' or not.
-    _d="$($CDHISTPROG_ "$@")"
+    _d="$(cdhist "$@")"
 
     if [ $? -eq 1 ]; then
 	return 0
@@ -45,7 +42,7 @@ function cd_
     # If the 'cd' is successful then call the script again merely so it
     # can record the new working directory in the history stack.
     if 'cd' "$_d"; then
-	$CDHISTPROG_ -u
+	cdhist -u
     fi
 
     return $?

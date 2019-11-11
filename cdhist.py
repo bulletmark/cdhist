@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 'A bash directory stack "cd history" function'
 #
 # Copyright (C) 2010 Mark Blakeney. This program is distributed under
@@ -71,7 +71,6 @@ def readHist():
 
 def fetchHist():
     'Update and return the current history stack'
-
     # Get current and prev dirs
     pwd = [os.environ.get('PWD') or os.getcwd()]
     if 'OLDPWD' in os.environ:

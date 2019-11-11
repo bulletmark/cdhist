@@ -58,29 +58,32 @@ Arch users can install [cdhist from the
 AUR](https://aur.archlinux.org/packages/cdhist/) and skip to the next
 section.
 
-Requires `python-setuptools` installed.
+Ensure `python3-pip` is installed. Bash and python 3.4 or later are
+required.
 
-Requires bash + python 2.6 or later (and is compatible with python 3+).
 Note [cdhist is on PyPI](https://pypi.org/project/cdhist/) so you can
-`sudo pip install cdhist` or:
+just type `sudo pip3 install cdhist`. Or do the following:
 
 ```
 git clone http://github.com/bulletmark/cdhist
 cd cdhist
-sudo make uninstall # Do this to make sure old versions are purged
-sudo make install
+sudo pip3 install .
 ```
 
 ### CONFIGURATION
 
 Each user who wants to use the cdhist facility should source the
-`/etc/cdhist.bashrc` file into their bashrc, i.e in `~/.bashrc`
-just add:
+`cdhist.bashrc` file into their bashrc, i.e in `~/.bashrc`
+just add the following lines:
 
 ```
-if [ -f /etc/cdhist.bashrc]; then
-    source /etc/cdhist.bashrc
-fi
+for _d in /usr/share /usr/local/share; do
+    _f="$_d/cdhist/cdhist.bashrc"
+    if [[ -r $_f ]]; then
+	source $_f
+	break
+    fi
+done
 ```
 
 Then log out and back in again.
@@ -91,31 +94,28 @@ Some people may prefer not to alias their system `cd` command to this
 utility and just use an alternative unique command name. To do this, set
 `CDHISTCOMMAND` to your preferred name before you invoke the
 `cdhist.bashrc` script in your `~/.bashrc`. E.g, to use the command name
-`xd` rather than `cd`:
+`xd` rather than `cd` add the following export after the `if` test and
+before the `source` line in the above.
 
 ```
-if [ -f /etc/cdhist.bashrc]; then
-    export CDHISTCOMMAND=xd
-    source /etc/cdhist.bashrc
-fi
+export CDHISTCOMMAND=xd
 ```
 
-Then just type `xd /tmp` to change dir, `xd --` to see and select dirs,
-etc.
+Log out/in, and then just type `xd /tmp` to change dir, `xd --` to see
+and select dirs, etc.
 
 ### UPGRADE
 
 ```
 cd cdhist  # Source dir, as above
 git pull
-sudo make install
+sudo pip3 install -U .
 ```
 
 ### REMOVAL
 
 ```
-cd cdhist  # Source dir, as above
-sudo make uninstall
+sudo pip3 uninstall cdhist
 ```
 
 ### LICENSE
