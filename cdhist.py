@@ -19,7 +19,8 @@
 
 # Make work with python 2 and 3
 from __future__ import print_function
-import os, sys
+import os
+import sys
 
 # Default size of history (CDHISTSIZE + 0). Can be overridden by setting
 # this as an environment variable.

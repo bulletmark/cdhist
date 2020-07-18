@@ -2,9 +2,9 @@
 
 [cdhist](http://github.com/bulletmark/cdhist) is a utility which
 provides a bash shell **cd history** directory stack. A bash `cd` alias
-calls a python helper script to intercept your normal shell `cd` command
-and maintain a stack of directories you previously visited which can be
-listed and quickly jumped to by numeric index.
+calls a tiny helper script to intercept your normal shell `cd` command
+and maintain a stack of all directories you previously visited which can
+be listed and quickly jumped to by numeric index.
 
 The latest version and documentation is available at
 http://github.com/bulletmark/cdhist.
@@ -16,6 +16,16 @@ Add "somepath" to your directory stack and cd there:
 ```
 cd somepath
 ```
+
+List the stack and its indices then immediately prompt for another
+directory to select and cd to:
+
+```
+cd --
+```
+
+That's it! The above is all you realy need to know. Other available
+commands and options are:
 
 List the current stack and its indices:
 
@@ -35,14 +45,7 @@ Search back through stack for "string" and cd there:
 cd -/string
 ```
 
-List the stack and its indices then immediately prompt for dir to
-select:
-
-```
-cd --
-```
-
-You can also type `/string` at the above prompt to search.
+Note, you can also type `/string` at the `cd --` prompt to search.
 
 Show this help:
 
@@ -58,11 +61,12 @@ Arch users can install [cdhist from the
 AUR](https://aur.archlinux.org/packages/cdhist/) and skip to the next
 section.
 
-Ensure `python3-pip` is installed. Bash and python 3.4 or later are
+Ensure `python-pip` is installed. Bash and python 3.4 or later are
 required.
 
 Note [cdhist is on PyPI](https://pypi.org/project/cdhist/) so you can
-just type `sudo pip3 install cdhist`. Or do the following:
+just type `sudo pip3 install cdhist`. Or do the following to install
+from this repository:
 
 ```
 git clone http://github.com/bulletmark/cdhist
