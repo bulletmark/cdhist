@@ -24,7 +24,7 @@ directory to select and cd to:
 cd --
 ```
 
-That's it! The above is all you realy need to know. Other available
+That's it! The above is all you really need to know. Other available
 commands and options are:
 
 List the current stack and its indices:
