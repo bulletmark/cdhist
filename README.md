@@ -42,7 +42,7 @@ $ pwd
 That's it! The above is all you really need to know. Instead of having
 to type the directory name you merely enter it's index. The directories
 are displayed most recently visited last, without duplicates. Index 0 is
-the current directory, Index 1 is the previous, index 2 is the second
+the current directory, index 1 is the previous, index 2 is the second
 previous, up to a user configured number (default 30). Other available
 commands and options are:
 
