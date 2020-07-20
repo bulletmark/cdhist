@@ -11,38 +11,57 @@ http://github.com/bulletmark/cdhist.
 
 ### USAGE
 
-Add "somepath" to your directory stack and cd there:
+Use the `cd` command to change directory as normal:
 
 ```
-cd somepath
+$ cd /tmp
+$ cd /etc
+$ cd /usr/share/doc
+$ cd /boot/loader
+$ cd ~/etc
+$ cd
 ```
 
-List the stack and its indices then immediately prompt for another
-directory to select and cd to:
+At any point you can use the `cd --` command to list all your previous
+directories and be prompted for one to select and cd to:
 
 ```
-cd --
+$ cd --
+  6 ...
+  5 /tmp
+  4 /etc
+  3 /usr/share/doc
+  2 /boot/loader
+  1 ~/etc
+  0 ~
+Select directory index [or <enter> to quit]: 3
+$ pwd
+/usr/share/doc
 ```
 
-That's it! The above is all you really need to know. Other available
+That's it! The above is all you really need to know. Instead of having
+to type the directory name you merely enter it's index. The directories
+are displayed most recently visited last, without duplicates. Index 0 is
+the current directory, Index 1 is the previous, index 2 is the second
+previous, up to a user configured number (default 30). Other available
 commands and options are:
 
-List the current stack and its indices:
+List the current stack and its indices (without prompting):
 
 ```
-cd -l
+$ cd -l
 ```
 
 Change dir to stack index "n":
 
 ```
-cd -n
+$ cd -n
 ```
 
 Search back through stack for "string" and cd there:
 
 ```
-cd -/string
+$ cd -/string
 ```
 
 Note, you can also type `/string` at the `cd --` prompt to search.
@@ -50,7 +69,7 @@ Note, you can also type `/string` at the `cd --` prompt to search.
 Show this help:
 
 ```
-cd -h|?
+$ cd -h|?
 ```
 
 All other arguments are passed on to the normal cd command.
@@ -69,9 +88,9 @@ just type `sudo pip3 install cdhist`. Or do the following to install
 from this repository:
 
 ```
-git clone http://github.com/bulletmark/cdhist
-cd cdhist
-sudo pip3 install .
+$ git clone http://github.com/bulletmark/cdhist
+$ cd cdhist
+$ sudo pip3 install .
 ```
 
 ### CONFIGURATION
@@ -111,15 +130,15 @@ and select dirs, etc.
 ### UPGRADE
 
 ```
-cd cdhist  # Source dir, as above
-git pull
-sudo pip3 install -U .
+$ cd cdhist  # Source dir, as above
+$ git pull
+$ sudo pip3 install -U .
 ```
 
 ### REMOVAL
 
 ```
-sudo pip3 uninstall cdhist
+$ sudo pip3 uninstall cdhist
 ```
 
 ### LICENSE
