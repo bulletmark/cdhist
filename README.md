@@ -109,7 +109,10 @@ for _d in /usr/share /usr/local/share; do
 done
 ```
 
-Then log out and back in again.
+Then log out and back in again. Note that some installations place the
+`cdhist/` directory elsewhere to the two most common locations listed
+above so you may need to work out the location from where to source the
+`cdhist.bashrc` file.
 
 ### ALTERNATIVE COMMAND NAME
 
