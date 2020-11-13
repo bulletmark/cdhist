@@ -38,7 +38,7 @@ Usage examples:
 $cmd somepath   : Add "somepath" to your directory stack and cd there.
 $cmd -l         : List the current stack and its indices.
 $cmd -n         : cd to stack index "n".
-$cmd -/string   : Search back through stack for REGEXP "string" and cd there.
+$cmd -/string   : Search back through stack for "string" and cd there.
 $cmd --         : List the stack and its indices then prompt for dir to select.
 $cmd -h|?       : Print this help.
 All other arguments are passed on to the normal cd command.
@@ -197,7 +197,7 @@ def main():
                     return selectHist(fetchHist(), int(arg[1:], 10), tty)
 
                 if arg[:2] == '-/':
-                    # Search stack for REGEXP "string" and select that dir
+                    # Search stack for "string" and select that dir
                     return searchHist(fetchHist(), arg[2:], tty)
 
         if sys.argv[1] == '--':
