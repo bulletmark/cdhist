@@ -13,13 +13,13 @@ executable = stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH
 
 setup(
     name=name,
-    version='2.0',
+    version='2.1',
     description='Program to provide a bash cd history directory stack',
     long_description=here.joinpath('README.md').read_text(),
     long_description_content_type="text/markdown",
     url='https://github.com/bulletmark/{}'.format(name),
     author='Mark Blakeney',
-    author_email='mark@irsaere.net',
+    author_email='mark.blakeney@bullet-systems.net',
     keywords='bash',
     license='GPLv3',
     py_modules=[module],

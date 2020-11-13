@@ -64,7 +64,8 @@ Search back through stack for "string" and cd there:
 $ cd -/string
 ```
 
-Note, you can also type `/string` at the `cd --` prompt to search.
+Note, you can also type `/string` (or just `string`) at the `cd --`
+prompt to search.
 
 Show this help:
 

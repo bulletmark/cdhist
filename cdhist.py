@@ -17,8 +17,6 @@
 #
 # See help text below and accompanying README.
 
-# Make work with python 2 and 3
-from __future__ import print_function
 import os
 import sys
 
@@ -165,16 +163,18 @@ def main():
                     except KeyboardInterrupt:
                         return 1
 
-                    if line and line[0] == '/':
-                        return searchHist(fetchHist(), line[1:], tty)
-
-                    try:
-                        num = int(line, 10)
-                    except ValueError:
+                    if not line:
                         return 1
 
                     # Select the index given by the user
-                    return selectHist(hist, num, tty)
+                    if line.isdigit():
+                        return selectHist(hist, int(line), tty)
+
+                    # Or, search for a string
+                    if line[0] == '/':
+                        line = line[1:]
+
+                    return searchHist(fetchHist(), line, tty)
 
                 return 1
 
