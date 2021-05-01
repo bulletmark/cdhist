@@ -36,10 +36,10 @@ shell "cd" command to maintain a stack of directories visited.
 
 Usage examples:
 $cmd somepath   : Add "somepath" to your directory stack and cd there.
+$cmd --         : List the stack and its indices then prompt for dir to select.
+$cmd -/string   : Search back through stack for "string" and cd there.
 $cmd -l         : List the current stack and its indices.
 $cmd -n         : cd to stack index "n".
-$cmd -/string   : Search back through stack for "string" and cd there.
-$cmd --         : List the stack and its indices then prompt for dir to select.
 $cmd -h|?       : Print this help.
 All other arguments are passed on to the normal cd command.
 Environment   : You have CDHISTSIZE=$size, CDHISTTILDE=$tilde.
@@ -116,16 +116,16 @@ def main():
     # 0 = Proceed with real cd command using the single argument provided.
     # 1 = Do not proceed. Just quit.
 
+    # Intercept home case immediately
+    if len(sys.argv) <= 1:
+        print(HOME)
+        return 0
+
     # Open the user's tty so we can send him messages
     tty = open('/dev/tty', 'w')
 
     # Ensure private history file
     os.umask(0o177)
-
-    # Intercept home case immediately
-    if len(sys.argv) <= 1:
-        print(HOME)
-        return 0
 
     if sys.argv[1][0] == '-':
         # Look for and process cdhist option

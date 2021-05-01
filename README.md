@@ -115,6 +115,17 @@ Then log out and back in again. Note that some installations place the
 above so you may need to work out the location from where to source the
 `cdhist.bashrc` file.
 
+### FZF INTEGRATION
+
+The popular [Command Line Fuzzy Finder](https://github.com/junegunn/fzf)
+`fzf` can be easily integrated with `cdhist` to give fuzzy search
+navigation of your directory history. Simply set the following in your
+environment:
+
+```
+export FZF_ALT_C_COMMAND="cat $HOME/.cd_history"
+```
+
 ### ALTERNATIVE COMMAND NAME
 
 Some people may prefer not to alias their system `cd` command to this
