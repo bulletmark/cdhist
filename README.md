@@ -126,6 +126,16 @@ environment:
 export FZF_ALT_C_COMMAND="cat $HOME/.cd_history"
 ```
 
+After adding this, you now have two options to change to previous
+directories:
+
+1. Either use the `cdhist` native command `cd --` to list all your
+   previous directories and then select the index of the one you want,
+   or
+
+2. Use the `fzf` key binding `<ALT+C>` to have `fzf` list all your previous
+   directories and fuzzy match on them for selection as you type.
+
 ### ALTERNATIVE COMMAND NAME
 
 Some people may prefer not to alias their system `cd` command to this
