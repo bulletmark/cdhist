@@ -22,8 +22,8 @@ $ cd ~/etc
 $ cd
 ```
 
-At any point you can use the `cd --` command to list all your previous
-directories and be prompted for one to select and cd to:
+At any point you can use the `cd --` command to list all your previously
+visited directories and be prompted for one to select and cd to:
 
 ```
 $ cd --
@@ -94,9 +94,9 @@ $ cd cdhist
 $ sudo pip3 install .
 ```
 
-### CONFIGURATION
+### SETUP
 
-Each user who wants to use the cdhist facility should source the
+Each user who wants to use the cdhist facility must source the
 `cdhist.bashrc` file into their bashrc, i.e in `~/.bashrc`
 just add the following lines:
 
@@ -110,17 +110,17 @@ for _d in /usr/share /usr/local/share; do
 done
 ```
 
-Then log out and back in again. Note that some installations place the
-`cdhist/` directory elsewhere to the two most common locations listed
-above so you may need to work out the location from where to source the
-`cdhist.bashrc` file.
+Then log out and back in again. Note that some installations may place
+the `cdhist/` directory elsewhere to the two most common locations
+listed above so you may need to work out the location from where to
+source the `cdhist.bashrc` file.
 
 ### FZF INTEGRATION
 
 The popular [Command Line Fuzzy Finder](https://github.com/junegunn/fzf)
-`fzf` can be easily integrated with `cdhist` to give fuzzy search
-navigation of your directory history. Simply set the following in your
-environment:
+`fzf` can easily be integrated with `cdhist` to provide fuzzy search
+navigation over your directory history. Simply set the following in your
+environment to have `fzf` search the directories recorded by `cdhist`:
 
 ```
 export FZF_ALT_C_COMMAND="cat $HOME/.cd_history"
@@ -129,12 +129,15 @@ export FZF_ALT_C_COMMAND="cat $HOME/.cd_history"
 After adding this, you now have two options to change to previous
 directories:
 
-1. Either use the `cdhist` native command `cd --` to list all your
-   previous directories and then select the index of the one you want,
-   or
+1. Either use the `cdhist` native command `cd --` or other options
+   described above to list all your previous directories and then select
+   the one you want, or
 
 2. Use the `fzf` key binding `<ALT+C>` to have `fzf` list all your previous
-   directories and fuzzy match on them for selection as you type.
+   directories and fuzzy match on them for selection as you type. `fzf`
+   can also provide fancy [directory
+   previews](https://github.com/junegunn/fzf/wiki/Configuring-shell-key-bindings#preview-1)
+   using `tree`, etc.
 
 ### ALTERNATIVE COMMAND NAME
 
