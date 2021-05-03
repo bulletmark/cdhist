@@ -4,7 +4,10 @@
 provides a bash shell **cd history** directory stack. A bash `cd` alias
 calls a tiny helper script to intercept your normal shell `cd` command
 and maintain a stack of all directories you previously visited which can
-be listed and quickly jumped to by numeric index.
+be listed and quickly jumped to by numeric index. You can also integrate
+the [Command Line Fuzzy Finder](https://github.com/junegunn/fzf) `fzf`
+to fuzzy search and select on previously visited directories. See the
+section below about [`fzf integration`](#fzf-integration).
 
 The latest version and documentation is available at
 http://github.com/bulletmark/cdhist.
@@ -43,7 +46,7 @@ That's it! The above is all you really need to know. Instead of having
 to type the directory name you merely enter it's index. The directories
 are displayed most recently visited last, without duplicates. Index 0 is
 the current directory, index 1 is the previous, index 2 is the second
-previous, up to a user configured number (default 30). Other available
+previous, up to a user configured number (default 50). Other available
 commands and options are:
 
 List the current stack and its indices (without prompting):
@@ -129,7 +132,7 @@ export FZF_ALT_C_COMMAND="cat $HOME/.cd_history"
 After adding this, you now have two options to change to previous
 directories:
 
-1. Either use the `cdhist` native command `cd --` or other options
+1. Either use the `cdhist` native command `cd --` or any other commands
    described above to list all your previous directories and then select
    the one you want, or
 

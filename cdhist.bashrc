@@ -17,7 +17,7 @@
 # details.
 
 # User option: Size of the directory stack
-export CDHISTSIZE=${CDHISTSIZE:=31}
+export CDHISTSIZE=${CDHISTSIZE:=50}
 
 # User option: Set the following "TRUE" if you want your home directory
 # displayed as a tilde ("~"). Else set FALSE, null, etc.

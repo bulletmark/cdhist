@@ -22,7 +22,7 @@ import sys
 
 # Default size of history (CDHISTSIZE + 0). Can be overridden by setting
 # this as an environment variable.
-CDHISTSIZE = int(os.environ.get('CDHISTSIZE') or 31)
+CDHISTSIZE = int(os.environ.get('CDHISTSIZE') or 50)
 
 # Set the following True if you want your home dir ($HOME) substituted
 # in the directory list as '~'. Else unset or set False, etc.
