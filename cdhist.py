@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'A bash directory stack "cd history" function'
+'A Linux shell directory stack "cd history" function'
 #
 # Copyright (C) 2010 Mark Blakeney. This program is distributed under
 # the terms of the GNU General Public License.

@@ -1,13 +1,14 @@
-## BASH SHELL CD HISTORY
+## LINUX SHELL CD HISTORY
 
 [cdhist](http://github.com/bulletmark/cdhist) is a utility which
-provides a bash shell **cd history** directory stack. A bash `cd` alias
-calls a tiny helper script to intercept your normal shell `cd` command
-and maintain a stack of all directories you previously visited which can
-be listed and quickly jumped to by numeric index. You can also integrate
-the [Command Line Fuzzy Finder](https://github.com/junegunn/fzf) `fzf`
-to fuzzy search and select on previously visited directories. See the
-section below about [`fzf integration`](#fzf-integration).
+provides a Linux shell **cd history** directory stack. A shell `cd`
+alias calls a tiny helper script to intercept your normal shell `cd`
+command and maintain an ordered stack of all directories you previously
+visited which can be listed and quickly jumped to by numeric index. You
+can also integrate the [Command Line Fuzzy
+Finder](https://github.com/junegunn/fzf) `fzf` to fuzzy search and
+select on previously visited directories. See the section below about
+[`fzf integration`](#fzf-integration).
 
 The latest version and documentation is available at
 http://github.com/bulletmark/cdhist.
@@ -84,8 +85,7 @@ Arch users can install [cdhist from the
 AUR](https://aur.archlinux.org/packages/cdhist/) and skip to the next
 section.
 
-Ensure `python-pip` is installed. Bash and python 3.4 or later are
-required.
+Ensure `pip3` is installed. Python 3.4 or later is required.
 
 Note [cdhist is on PyPI](https://pypi.org/project/cdhist/) so you can
 just type `sudo pip3 install cdhist`. Or do the following to install
@@ -100,12 +100,12 @@ $ sudo pip3 install .
 ### SETUP
 
 Each user who wants to use the cdhist facility must source the
-`cdhist.bashrc` file into their bashrc, i.e in `~/.bashrc`
-just add the following lines:
+`cdhist.rc` file into their shell at login, i.e in `~/.bashrc`, or
+`~/.zshrc`, etc just add the following lines:
 
 ```
 for _d in /usr/share /usr/local/share; do
-    _f="$_d/cdhist/cdhist.bashrc"
+    _f="$_d/cdhist/cdhist.rc"
     if [[ -r $_f ]]; then
 	source $_f
 	break
@@ -116,7 +116,7 @@ done
 Then log out and back in again. Note that some installations may place
 the `cdhist/` directory elsewhere to the two most common locations
 listed above so you may need to work out the location from where to
-source the `cdhist.bashrc` file.
+source the `cdhist.rc` file.
 
 ### FZF INTEGRATION
 
@@ -147,7 +147,7 @@ directories:
 Some people may prefer not to alias their system `cd` command to this
 utility and just use an alternative unique command name. To do this, set
 `CDHISTCOMMAND` to your preferred name before you invoke the
-`cdhist.bashrc` script in your `~/.bashrc`. E.g, to use the command name
+`cdhist.rc` script in your shell init file. E.g, to use the command name
 `xd` rather than `cd` add the following export after the `if` test and
 before the `source` line in the above.
 
