@@ -2,10 +2,10 @@
 
 [cdhist](http://github.com/bulletmark/cdhist) is a utility which
 provides a Linux shell **cd history** directory stack. A shell `cd`
-alias calls a tiny helper script to intercept your normal shell `cd`
-command and maintain an ordered stack of all directories you previously
-visited which can be listed and quickly jumped to by numeric index. You
-can also integrate the [Command Line Fuzzy
+alias calls a tiny helper script to intercept your typed `cd` command
+and maintain an ordered stack of all directories you previously visited
+which can be listed and quickly jumped to by numeric index. You can also
+integrate the [Command Line Fuzzy
 Finder](https://github.com/junegunn/fzf) `fzf` to fuzzy search and
 select on previously visited directories. See the section below about
 [`fzf integration`](#fzf-integration).
@@ -94,7 +94,7 @@ from this repository:
 ```
 $ git clone http://github.com/bulletmark/cdhist
 $ cd cdhist
-$ sudo pip3 install .
+$ sudo pip3 install -U .
 ```
 
 ### SETUP
@@ -118,6 +118,11 @@ the `cdhist/` directory elsewhere to the two most common locations
 listed above so you may need to work out the location from where to
 source the `cdhist.rc` file.
 
+NOTE: The `cd` alias is only created for and invoked by user interactive
+shell sessions, i.e. only for `cd` commands you manually type yourself.
+System or personal scripts and programs always use the standard shell
+`cd` command.
+
 ### FZF INTEGRATION
 
 The popular [Command Line Fuzzy Finder](https://github.com/junegunn/fzf)
@@ -129,18 +134,14 @@ environment to have `fzf` search the directories recorded by `cdhist`:
 export FZF_ALT_C_COMMAND="cat $HOME/.cd_history"
 ```
 
-After adding this, you now have two options to change to previous
-directories:
-
-1. Either use the `cdhist` native command `cd --` or any other commands
-   described above to list all your previous directories and then select
-   the one you want, or
-
-2. Use the `fzf` key binding `<ALT+C>` to have `fzf` list all your previous
-   directories and fuzzy match on them for selection as you type. `fzf`
-   can also provide fancy [directory
-   previews](https://github.com/junegunn/fzf/wiki/Configuring-shell-key-bindings#preview-1)
-   using `tree`, etc.
+After adding this (and reloading your shell session), you can use the
+`fzf` key binding `<ALT+C>` to have `fzf` list all your previous
+directories and fuzzy match on them for selection as you type. `fzf` can
+also provide fancy [directory
+previews](https://github.com/junegunn/fzf/wiki/Configuring-shell-key-bindings#preview-1)
+using `tree`, etc. Of course the `cdhist` native command `cd --` and
+other `cdhist` commands described above are still available, in addition to
+the `fzf` key binding.
 
 ### ALTERNATIVE COMMAND NAME
 

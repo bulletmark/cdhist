@@ -145,38 +145,33 @@ def main():
                 hist = fetchHist()
 
                 # List the directory stack (in reversed output)
-                n = len(hist)
-                for dird in reversed(hist):
-
+                for n, dird in reversed(list(enumerate(hist))):
                     if CDHISTTILDE and dird.startswith(HOME):
                         dird = dird.replace(HOME, '~', 1)
 
-                    n -= 1
                     tty.write('{:3} {}\n'.format(n, dird))
 
-                if arg == '--':
-                    # Prompt for index from the screen
-                    tty.write('Select directory index [or <enter> to quit]: ')
-                    tty.flush()
-                    try:
-                        line = sys.stdin.readline().strip()
-                    except KeyboardInterrupt:
-                        return 1
+                if arg == '-l':
+                    return 1
 
-                    if not line:
-                        return 1
+                # Prompt for index from the screen
+                tty.write('Select directory index [or <enter> to quit]: ')
+                tty.flush()
+                try:
+                    line = sys.stdin.readline().strip()
+                except KeyboardInterrupt:
+                    return 1
 
-                    # Select the index given by the user
-                    if line.isdigit():
-                        return selectHist(hist, int(line), tty)
+                if not line:
+                    return 1
 
-                    # Or, search for a string
-                    if line[0] == '/':
-                        line = line[1:]
+                # Select the index given by the user
+                if line.isdigit():
+                    return selectHist(hist, int(line), tty)
 
-                    return searchHist(fetchHist(), line, tty)
-
-                return 1
+                # Or, search for a string
+                return searchHist(fetchHist(),
+                        line[1:] if line[0] == '/' else line, tty)
 
             if arg == '-h' or arg == '-?':
                 from string import Template

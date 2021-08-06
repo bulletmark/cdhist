@@ -12,7 +12,7 @@
 # General Public License at <http://www.gnu.org/licenses/> for more
 # details.
 
-NAME = cdhist
+NAME = $(shell basename $(CURDIR))
 
 DOC = README.md
 DOCOUT = $(DOC:.md=.html)
@@ -41,7 +41,7 @@ $(DOCOUT): $(DOC)
 
 check:
 	flake8 $(NAME).py $(NAME) setup.py
-	vermin -i -q $(NAME).py $(NAME) setup.py
+	vermin -i -q --no-tips $(NAME).py $(NAME) setup.py
 	python3 setup.py check
 
 clean:
