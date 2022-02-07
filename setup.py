@@ -13,7 +13,7 @@ executable = stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH
 
 setup(
     name=name,
-    version='2.6',
+    version='2.7',
     description='Program to provide a Linux cd history directory stack',
     long_description=here.joinpath('README.md').read_text(),
     long_description_content_type="text/markdown",

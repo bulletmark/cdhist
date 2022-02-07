@@ -40,6 +40,7 @@ $cmd --         : List the stack and its indices then prompt for dir to select.
 $cmd -/string   : Search back through stack for "string" and cd there.
 $cmd -l         : List the current stack and its indices.
 $cmd -n         : cd to stack index "n".
+$cmd -p         : Purge non-existent directories from history.
 $cmd -h|?       : Print this help.
 All other arguments are passed on to the normal cd command.
 Environment   : You have CDHISTSIZE=$size, CDHISTTILDE=$tilde.
@@ -121,7 +122,7 @@ def main():
         print(HOME)
         return 0
 
-    # Open the user's tty so we can send him messages
+    # Open the user's tty so we can send them messages
     tty = open('/dev/tty', 'w')
 
     # Ensure private history file
@@ -136,6 +137,11 @@ def main():
             # after a successfull shell 'cd'.
             if arg == '-u':
                 writeHist(fetchHist())
+                return 0
+
+            # Just clean out the directory history?
+            if arg == '-p':
+                writeHist(h for h in fetchHist() if os.path.exists(h))
                 return 0
 
             # List directory stack?

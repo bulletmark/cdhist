@@ -41,7 +41,7 @@ $(DOCOUT): $(DOC)
 
 check:
 	flake8 $(NAME).py $(NAME) setup.py
-	vermin -i -q --no-tips $(NAME).py $(NAME) setup.py
+	vermin -i -vv --no-tips $(NAME).py $(NAME) setup.py
 	python3 setup.py check
 
 clean:
