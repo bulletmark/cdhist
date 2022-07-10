@@ -1,4 +1,6 @@
 ## LINUX SHELL CD HISTORY
+[![PyPi](https://img.shields.io/pypi/v/cdhist)](https://pypi.org/project/cdhist/)
+[![AUR](https://img.shields.io/aur/version/cdhist)](https://aur.archlinux.org/packages/cdhist/)
 
 [cdhist](http://github.com/bulletmark/cdhist) is a utility which
 provides a Linux shell **cd history** directory stack. A shell `cd`
