@@ -31,6 +31,7 @@ export CDHISTTILDE=${CDHISTTILDE:=TRUE}
 alias ${CDHISTCOMMAND:-cd}=cd_
 
 cd_() {
+    local _d
     # Call the worker script to process the argument. The script will
     # return a (possibly different) string argument and a status to
     # indicate whether to proceed with the 'cd' or not.
