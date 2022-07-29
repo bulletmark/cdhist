@@ -130,29 +130,38 @@ def main():
         if len(sys.argv) == 2:
             arg = sys.argv[1]
 
-            # This may be a call to just update the directory history. I.e
-            # after a successfull shell 'cd'.
-            if arg == '-u':
-                writeHist(fetchHist())
-                return 0
-
-            # Just clean out the directory history?
-            if arg == '-p':
-                writeHist(h for h in fetchHist() if os.path.exists(h))
-                return 0
-
             # Show path of rc file on this system
             if arg == '-s':
                 stem = os.path.splitext(os.path.basename(sys.argv[0]))[0]
                 print(os.path.join(sys.prefix, 'share', stem, (stem + '.rc')))
                 return 0
 
-            # List directory stack?
-            if arg == '--' or arg == '-l':
-                tty = open('/dev/tty', 'w')
+            if arg in {'-h', '-?'}:
+                # Just output help/usage
+                from string import Template
+                print(Template(HELP).substitute(
+                    cmd=os.environ.get('CDHISTCOMMAND', 'cd'),
+                    size=CDHISTSIZE, tilde=CDHISTTILDE).rstrip(),
+                    file=sys.stderr)
+                return 1
 
-                # Fetch the current history
-                hist = fetchHist()
+            # Fetch the current history
+            hist = fetchHist()
+
+            # This may be a call to just update the directory history. I.e
+            # after a successfull shell 'cd'.
+            if arg == '-u':
+                writeHist(hist)
+                return 0
+
+            # Just clean out the directory history?
+            if arg == '-p':
+                writeHist(h for h in hist if os.path.exists(h))
+                return 0
+
+            # List directory stack?
+            if arg in {'--', '-l'}:
+                tty = open('/dev/tty', 'w')
 
                 # List the directory stack (in reversed output)
                 for n, dird in reversed(list(enumerate(hist))):
@@ -180,31 +189,22 @@ def main():
                     return selectHist(hist, int(line))
 
                 # Or, search for a string
-                return searchHist(fetchHist(),
+                return searchHist(hist,
                         line[1:] if line[0] == '/' else line)
-
-            if arg == '-h' or arg == '-?':
-                from string import Template
-                # Just output help/usage
-                print(Template(HELP).substitute(
-                    cmd=os.environ.get('CDHISTCOMMAND', 'cd'),
-                    size=CDHISTSIZE, tilde=CDHISTTILDE).rstrip(),
-                    file=sys.stderr)
-                return 1
 
             if arg == '-':
                 # A normal shell can't cd to OLDPWD when it is not set (e.g.
                 # just after login). But we may have more history so use it :)
-                return selectHist(fetchHist(), 1)
+                return selectHist(hist, 1)
 
             if len(arg) > 1:
                 if arg[1:].isdigit():
                     # Select this directory index
-                    return selectHist(fetchHist(), int(arg[1:], 10))
+                    return selectHist(hist, int(arg[1:], 10))
 
                 if arg[:2] == '-/':
                     # Search stack for "string" and select that dir
-                    return searchHist(fetchHist(), arg[2:])
+                    return searchHist(hist, arg[2:])
 
         if sys.argv[1] == '--':
             del sys.argv[1]
