@@ -103,22 +103,16 @@ $ sudo pip3 install -U .
 
 Each user who wants to use the cdhist facility must source the
 `cdhist.rc` file into their shell at login, i.e in `~/.bashrc`, or
-`~/.zshrc`, etc just add the following lines:
+`~/.zshrc`, etc just add the following lines (after where your PATH is
+set up so that `cdhist` can be found):
 
 ```
-for _d in /usr/share /usr/local/share; do
-    _f="$_d/cdhist/cdhist.rc"
-    if [[ -r $_f ]]; then
-	source $_f
-	break
-    fi
-done
+if type cdhist &>/dev/null; then
+    source "$(cdhist -s)"
+fi
 ```
 
-Then log out and back in again. Note that some installations may place
-the `cdhist/` directory elsewhere to the two most common locations
-listed above so you may need to work out the location from where to
-source the `cdhist.rc` file.
+Then log out and back in again.
 
 NOTE: The `cd` alias is only created for and invoked by user interactive
 shell sessions, i.e. only for `cd` commands you manually type yourself.

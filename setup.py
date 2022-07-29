@@ -13,11 +13,11 @@ executable = stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH
 
 setup(
     name=name,
-    version='2.7',
+    version='2.8',
     description='Program to provide a Linux cd history directory stack',
     long_description=here.joinpath('README.md').read_text(),
     long_description_content_type="text/markdown",
-    url='https://github.com/bulletmark/{}'.format(name),
+    url=f'https://github.com/bulletmark/{name}',
     author='Mark Blakeney',
     author_email='mark.blakeney@bullet-systems.net',
     keywords='bash zsh fzf',
@@ -28,7 +28,7 @@ setup(
         'Programming Language :: Python :: 3',
     ],
     data_files=[
-        ('share/{}'.format(name), ['README.md', '{}.rc'.format(name)]),
+        (f'share/{name}', ['README.md', f'{name}.rc']),
     ],
     scripts=[f.name for f in here.iterdir() if f.name.startswith(name)
         and f.is_file() and f.stat().st_mode & executable],

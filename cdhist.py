@@ -52,6 +52,9 @@ CDHISTFILE = os.path.join(HOME, '.cd_history')
 
 def writeHist(hist):
     'Write the passed history stack to the history file'
+    # Ensure private history file
+    os.umask(0o177)
+
     try:
         with open(CDHISTFILE, 'w') as fd:
             fd.write('\n'.join(hist) + '\n')
@@ -61,7 +64,7 @@ def writeHist(hist):
 def readHist():
     'Read the history stack from the history file'
     try:
-        with open(CDHISTFILE, 'r') as fd:
+        with open(CDHISTFILE) as fd:
             hist = [d.rstrip('\n') for d in fd]
     except IOError:
         # No file, assume empty history
@@ -90,43 +93,37 @@ def fetchHist():
     # Return the stack, constraining its size
     return (pwd + hist)[:CDHISTSIZE]
 
-def selectHist(hist, num, tty):
+def selectHist(hist, num):
     'Bounds check the entered index and select directory if in range'
     if num < 0 or num >= len(hist):
-        tty.write('cdhist: number {} out of range\n'.format(num))
+        print(f'cdhist: number {num} out of range', file=sys.stderr)
         return 1
 
     print(hist[num])
     return 0
 
-def searchHist(hist, text, tty):
+def searchHist(hist, text):
     'Search back for text in stack and select directory if found'
     for dir in hist[1:]:
         if text in dir:
             print(dir)
             return 0
 
-    tty.write('cdhist: string "{}" not found\n'.format(text))
+    print(f'cdhist: string "{text}" not found', file=sys.stderr)
     return 1
 
 def main():
     'Main code'
-    # Main returns a directory name to cd to (as a string). Also returns
-    # a status code:
-    #
-    # 0 = Proceed with real cd command using the single argument provided.
-    # 1 = Do not proceed. Just quit.
+    # Main returns a status code:
+    # 0 = Directory written to stdout. Calling script should cd to that
+    #     directory.
+    # 1 = Error/message written to stderr (etc). Caller should just
+    #     quit.
 
     # Intercept home case immediately
     if len(sys.argv) <= 1:
         print(HOME)
         return 0
-
-    # Open the user's tty so we can send them messages
-    tty = open('/dev/tty', 'w')
-
-    # Ensure private history file
-    os.umask(0o177)
 
     if sys.argv[1][0] == '-':
         # Look for and process cdhist option
@@ -144,8 +141,15 @@ def main():
                 writeHist(h for h in fetchHist() if os.path.exists(h))
                 return 0
 
+            # Show path of rc file on this system
+            if arg == '-s':
+                stem = os.path.splitext(os.path.basename(sys.argv[0]))[0]
+                print(os.path.join(sys.prefix, 'share', stem, (stem + '.rc')))
+                return 0
+
             # List directory stack?
             if arg == '--' or arg == '-l':
+                tty = open('/dev/tty', 'w')
 
                 # Fetch the current history
                 hist = fetchHist()
@@ -155,7 +159,7 @@ def main():
                     if CDHISTTILDE and dird.startswith(HOME):
                         dird = dird.replace(HOME, '~', 1)
 
-                    tty.write('{:3} {}\n'.format(n, dird))
+                    tty.write(f'{n:3} {dird}\n')
 
                 if arg == '-l':
                     return 1
@@ -173,38 +177,39 @@ def main():
 
                 # Select the index given by the user
                 if line.isdigit():
-                    return selectHist(hist, int(line), tty)
+                    return selectHist(hist, int(line))
 
                 # Or, search for a string
                 return searchHist(fetchHist(),
-                        line[1:] if line[0] == '/' else line, tty)
+                        line[1:] if line[0] == '/' else line)
 
             if arg == '-h' or arg == '-?':
                 from string import Template
                 # Just output help/usage
-                tty.write(Template(HELP).substitute(
+                print(Template(HELP).substitute(
                     cmd=os.environ.get('CDHISTCOMMAND', 'cd'),
-                    size=CDHISTSIZE, tilde=CDHISTTILDE))
+                    size=CDHISTSIZE, tilde=CDHISTTILDE).rstrip(),
+                    file=sys.stderr)
                 return 1
 
             if arg == '-':
                 # A normal shell can't cd to OLDPWD when it is not set (e.g.
                 # just after login). But we may have more history so use it :)
-                return selectHist(fetchHist(), 1, tty)
+                return selectHist(fetchHist(), 1)
 
             if len(arg) > 1:
                 if arg[1:].isdigit():
                     # Select this directory index
-                    return selectHist(fetchHist(), int(arg[1:], 10), tty)
+                    return selectHist(fetchHist(), int(arg[1:], 10))
 
                 if arg[:2] == '-/':
                     # Search stack for "string" and select that dir
-                    return searchHist(fetchHist(), arg[2:], tty)
+                    return searchHist(fetchHist(), arg[2:])
 
         if sys.argv[1] == '--':
             del sys.argv[1]
         else:
-            tty.write('cdhist: cd command options are not supported\n')
+            print('cdhist: invalid option', file=sys.stderr)
             return 1
 
     # Fall through to real 'cd' to deal with normal dir
