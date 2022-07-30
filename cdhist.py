@@ -132,9 +132,17 @@ def main():
 
             # Show path of rc file on this system
             if arg == '-s':
-                stem = os.path.splitext(os.path.basename(sys.argv[0]))[0]
-                print(os.path.join(sys.prefix, 'share', stem, (stem + '.rc')))
-                return 0
+                prog = sys.argv[0]
+                stem = os.path.splitext(os.path.basename(prog))[0]
+                base = os.path.dirname(os.path.dirname(prog))
+                for ddir in (sys.prefix, base):
+                    path = os.path.join(ddir, 'share', stem, f'{stem}.rc')
+                    if os.path.exists(path):
+                        print(path)
+                        return 0
+
+                print(f'Can not determine {stem} data_files', file=sys.stderr)
+                return 1
 
             if arg in {'-h', '-?'}:
                 # Just output help/usage
