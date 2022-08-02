@@ -139,6 +139,14 @@ using `tree`, etc. Of course the `cdhist` native command `cd --` and
 other `cdhist` commands described above are still available, in addition to
 the `fzf` key binding.
 
+If you prefer that directories that do not exist are excluded from `fzf`
+and your `cd` history (i.e. exclude directories that have been deleted
+since they were last visited), then you can define the `fzf` command as:
+
+```
+export FZF_ALT_C_COMMAND="cdhist -p && cat $HOME/.cd_history"
+```
+
 ### ALTERNATIVE COMMAND NAME
 
 Some people may prefer not to alias their system `cd` command to this
