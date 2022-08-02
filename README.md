@@ -90,7 +90,7 @@ section.
 Ensure `pip3` is installed. Python 3.4 or later is required.
 
 Note [cdhist is on PyPI](https://pypi.org/project/cdhist/) so you can
-just type `sudo pip3 install cdhist`. Or do the following to install
+just type `sudo pip3 install -U cdhist`. Or do the following to install
 from this repository:
 
 ```
