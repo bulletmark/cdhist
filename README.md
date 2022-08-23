@@ -19,7 +19,7 @@ http://github.com/bulletmark/cdhist.
 
 Use the `cd` command to change directory as normal:
 
-```
+```sh
 $ cd /tmp
 $ cd /etc
 $ cd /usr/share/doc
@@ -54,19 +54,19 @@ commands and options are:
 
 List the current stack and its indices (without prompting):
 
-```
+```sh
 $ cd -l
 ```
 
 Change dir to stack index "n":
 
-```
+```sh
 $ cd -n
 ```
 
 Search back through stack for "string" and cd there:
 
-```
+```sh
 $ cd -/string
 ```
 
@@ -75,7 +75,7 @@ prompt to search.
 
 Show this help:
 
-```
+```sh
 $ cd -h|?
 ```
 
@@ -93,7 +93,7 @@ Note [cdhist is on PyPI](https://pypi.org/project/cdhist/) so you can
 just type `sudo pip3 install -U cdhist`. Or do the following to install
 from this repository:
 
-```
+```sh
 $ git clone http://github.com/bulletmark/cdhist
 $ cd cdhist
 $ sudo pip3 install -U .
@@ -106,7 +106,7 @@ Each user who wants to use the cdhist facility must source the
 `~/.zshrc`, etc just add the following lines (after where your PATH is
 set up so that `cdhist` can be found):
 
-```
+```sh
 if type cdhist &>/dev/null; then
     source "$(cdhist -s)"
 fi
@@ -123,27 +123,46 @@ System or personal scripts and programs always use the standard shell
 
 The popular [Command Line Fuzzy Finder](https://github.com/junegunn/fzf)
 `fzf` can easily be integrated with `cdhist` to provide fuzzy search
-navigation over your directory history. Simply set the following in your
+navigation over your directory history. Set the following in your
 environment to have `fzf` search the directories recorded by `cdhist`:
 
-```
+```sh
 export FZF_ALT_C_COMMAND="cat $HOME/.cd_history"
 ```
 
-After adding this (and reloading your shell session), you can use the
+You also should make a small change to the way you source the `fzf`
+completion and key-binding files into your shell, e.g. in your
+`~/.bashrc`. The following is a typical script to load `fzf` except the
+`source` line must be changed to do an "on the fly" edit of `builtin cd`
+to regular `cd`. E.g:
+
+```sh
+for _d in /usr/share/fzf /usr/share/fzf/shell \
+	  /usr/share/doc/fzf/examples /usr/share/bash-completion/completions/fzf ; do
+    if [[ -d $_d ]]; then
+        for _f in $_d/key-bindings.bash $_d/completion.bash; do
+            if [[ -f $_f ]]; then
+                source <(sed 's/builtin cd/cd/' $_f)
+            fi
+        done
+    fi
+done
+```
+
+After doing this (and reloading your shell session), you can use the
 `fzf` key binding `<ALT+C>` to have `fzf` list all your previous
 directories and fuzzy match on them for selection as you type. `fzf` can
 also provide fancy [directory
 previews](https://github.com/junegunn/fzf/wiki/Configuring-shell-key-bindings#preview-1)
 using `tree`, etc. Of course the `cdhist` native command `cd --` and
-other `cdhist` commands described above are still available, in addition to
-the `fzf` key binding.
+other `cdhist` commands described above are still available, in addition
+to the `fzf` key binding.
 
 If you prefer that directories that do not exist are excluded from `fzf`
 and your `cd` history (i.e. exclude directories that have been deleted
 since they were last visited), then you can define the `fzf` command as:
 
-```
+```sh
 export FZF_ALT_C_COMMAND="cdhist -p && cat $HOME/.cd_history"
 ```
 
@@ -156,7 +175,7 @@ utility and just use an alternative unique command name. To do this, set
 `xd` rather than `cd` add the following export after the `if` test and
 before the `source` line in the above.
 
-```
+```sh
 export CDHISTCOMMAND=xd
 ```
 
@@ -165,7 +184,7 @@ and select dirs, etc.
 
 ### UPGRADE
 
-```
+```sh
 $ cd cdhist  # Source dir, as above
 $ git pull
 $ sudo pip3 install -U .
@@ -173,7 +192,7 @@ $ sudo pip3 install -U .
 
 ### REMOVAL
 
-```
+```sh
 $ sudo pip3 uninstall cdhist
 ```
 
