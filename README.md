@@ -130,11 +130,11 @@ environment to have `fzf` search the directories recorded by `cdhist`:
 export FZF_ALT_C_COMMAND="cat $HOME/.cd_history"
 ```
 
-You also should make a small change to the way you source the `fzf`
-completion and key-binding files into your shell, e.g. in your
-`~/.bashrc`. The following is a typical script to load `fzf` except the
-`source` line must be changed to do an "on the fly" edit of `builtin cd`
-to regular `cd`. E.g:
+Since `fzf` version 0.31.0, you also should make a small change to the
+way you source the `fzf` completion and key-binding files into your
+shell, e.g. in your `~/.bashrc`. The following is a typical script to
+load `fzf` except the `source` line must be changed to do an "on the
+fly" edit of `builtin cd` to regular `cd`. E.g:
 
 ```sh
 for _d in /usr/share/fzf /usr/share/fzf/shell \
