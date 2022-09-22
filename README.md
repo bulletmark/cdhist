@@ -130,6 +130,12 @@ environment to have `fzf` search the directories recorded by `cdhist`:
 export FZF_ALT_C_COMMAND="cat $HOME/.cd_history"
 ```
 
+An alternative command, to list only existing directories:
+
+```sh
+export FZF_ALT_C_COMMAND='while read path; do test -d "$path" && echo "$path"; done < ~/.cd_history'
+```
+
 Since `fzf` version 0.31.0, you also should make a small change to the
 way you source the `fzf` completion and key-binding files into your
 shell, e.g. in your `~/.bashrc`. The following is a typical script to
