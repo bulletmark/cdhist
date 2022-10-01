@@ -20,9 +20,12 @@ upload: sdist
 	twine3 upload --skip-existing dist/*
 
 check:
-	flake8 $(PYNAME).py $(NAME) setup.py
-	vermin --no-tips -i $(PYNAME).py $(NAME) setup.py
+	flake8 $(PYNAME)/*.py setup.py
+	vermin --no-tips -i $(PYNAME)/*.py setup.py
 	python3 setup.py check
 
+doc:
+	update-readme-usage
+
 clean:
-	@rm -vrf *.egg-info build/ dist/ __pycache__/
+	@rm -vrf *.pyc *.egg-info build/ dist/ __pycache__ */__pycache__

@@ -1,4 +1,0 @@
-#!/usr/bin/python3
-from sys import exit
-from cdhist import main
-exit(main())
