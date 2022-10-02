@@ -243,6 +243,7 @@ def main():
         except Exception:
             return f'"{path}" can not be resolved.'
 
+    path = str(path)
     newhist = [path] + [p for p in hist if p != path]
 
     if args.purge_always:
