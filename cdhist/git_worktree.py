@@ -111,14 +111,19 @@ def parse_args(args):
             path = trees.get_path_from_branch(arg)
 
     elif args.search:
-        path = utils.check_search(args.search, [str(p) for p in trees.paths])
+        path = utils.check_search(args.search, trees.paths,
+                                  list_is_paths=True)
     else:
         arg = utils.prompt(args, trees.build_output())
         if not arg:
             return None
 
-        path = utils.check_digit(arg, trees.paths) or \
-                trees.get_path_from_branch(arg)
+        if len(arg) > 1 and arg[0] == '/':
+            path = utils.check_search(arg[1:], trees.paths,
+                                    list_is_paths=True)
+        else:
+            path = utils.check_digit(arg, trees.paths) or \
+                    trees.get_path_from_branch(arg)
 
     if not path:
         sys.exit(f'fatal: no worktree for "{arg}".')

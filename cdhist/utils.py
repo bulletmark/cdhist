@@ -52,12 +52,43 @@ def check_digit(arg, dirlist, *, reverse=False):
 
     return Path(dirlist[num])
 
-def check_search(arg, dirlist):
+def check_search(arg, dirlist, *, list_is_paths=False):
     'Search for arg in given dirlist'
-    for pathstr in dirlist:
-        if arg in pathstr:
-            return Path(pathstr)
+    from itertools import count
 
-    sys.exit(f'No directory matches "{arg}".')
+    if not list_is_paths:
+        dirlist = [Path(p) for p in dirlist]
+
+    # Perform a somewhat heuristic search. Iterate through all dirs and
+    # look for match in final dir, then go up a level if no match and
+    # iterate again. Always favor a full match then a partial start
+    # match then a match anywhere.
+    for level in count(1):
+        complete = True
+        match_start = match_any = None
+        for path in dirlist:
+            if len(path.parts) >= level:
+                name = path.parts[-level]
+                if name == arg:
+                    return path
+
+                complete = False
+                if not match_start:
+                    if name.startswith(arg):
+                        match_start = path
+                    elif not match_any:
+                        if arg in name:
+                            match_any = path
+
+        # Did not find a full match at this level. If we found a partial
+        # match at the start then return that, else if we found a match
+        # anywhere then return that.
+        if match_start:
+            return match_start
+        elif match_any:
+            return match_any
+
+        if complete:
+            sys.exit(f'No match on "{arg}".')
 
 # vim: se et:
