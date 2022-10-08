@@ -121,9 +121,9 @@ Then log out and back in again.
 ## FZF Integration
 
 The popular [Command Line Fuzzy Finder](https://github.com/junegunn/fzf)
-`fzf` can easily be integrated with `cdhist` to provide fuzzy search
+`fzf` can easily be integrated with cdhist to provide fuzzy search
 navigation over your directory history. Set the following in your
-environment to have `fzf` search the directories recorded by `cdhist`:
+environment to have `fzf` search the directories recorded by cdhist:
 
 ```sh
 export FZF_ALT_C_COMMAND="cat $HOME/.cd_history"
@@ -153,8 +153,8 @@ After doing this (and reloading your shell session), you can use the
 directories and fuzzy match on them for selection as you type. `fzf` can
 also provide fancy [directory
 previews](https://github.com/junegunn/fzf/wiki/Configuring-shell-key-bindings#preview-1)
-using `tree`, etc. Of course the `cdhist` native command `cd --` and
-other `cdhist` commands described above are still available, in addition
+using `tree`, etc. Of course the cdhist native command `cd --` and
+other cdhist commands described above are still available, in addition
 to the `fzf` key binding.
 
 ### Pruning Non-Existent Directories
@@ -241,7 +241,7 @@ option](#default-options)).
 ### Relative Git Worktree Directories
 
 The `git worktree list` command displays absolute directory paths, and
-`cdhist` does also by default, but many users prefer them displayed
+cdhist does also by default, but many users prefer them displayed
 as relative paths. The Git worktree command does not provide this but
 you can enable it in cdhist by adding the `-r/--relative` option, e.g:
 
@@ -259,7 +259,7 @@ adding `--relative` as a [default option](#default-options).
 
 ### Git Worktree Functionality Alone
 
-Some users may want the git worktree functionality provided by `cdhist`
+Some users may want the git worktree functionality provided by cdhist
 but are not interested in the standard `cd` history functionality, or
 alternately, want to use a completely separate command for the git
 worktree functionality. To do this, simply add your desired command name
@@ -325,6 +325,13 @@ options:
 
 Note you can set default options in ~/.config/cdhist-flags.conf.
 ```
+
+## Limitations
+
+Regular `cd`, e.g. as provided by the bash builtin, offers some esoteric
+command line options such as `-e` and `-@`, and shell options such as
+`autocd`, `cdspell`, `cdable_vars`. These rarely used options are not
+supported by cdhist.
 
 ## Upgrade
 

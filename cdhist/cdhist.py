@@ -40,17 +40,12 @@ def init_code(args):
     class CTemplate(Template):
         delimiter = '!'
 
-    arg = args.directory
+    cmd = args.directory or DEFCMD
     prog = sys.argv[0]
-
-    if arg:
-        if ' ' in arg:
-            cmd, opts = arg.split(maxsplit=1)
-            prog += f' {opts}'
-        else:
-            cmd = arg
-    else:
-        cmd = DEFCMD
+    arglist = cmd.split(maxsplit=1)
+    if len(arglist) > 1:
+        cmd, opts = arglist
+        prog += f' {opts}'
 
     return CTemplate(SHELLCODE.strip()).substitute(cmd=cmd, prog=prog)
 
