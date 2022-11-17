@@ -19,7 +19,7 @@ SHELLCODE = '''
         return 0
     fi
 
-    builtin cd "$d"
+    builtin cd -- "$d"
 }
 '''
 
@@ -175,11 +175,13 @@ def main():
 
     # Merge in default args from user config file. Then parse the
     # command line.
-    cnflines = ''
     cnffile = CNFFILE.expanduser()
-    if cnffile.exists():
+    try:
         with cnffile.open() as fp:
             cnflines = [re.sub(r'#.*$', '', line).strip() for line in fp]
+    except FileNotFoundError:
+        cnflines = ''
+    else:
         cnflines = ' '.join(cnflines).strip()
 
     args = opt.parse_args(shlex.split(cnflines) + sys.argv[1:])

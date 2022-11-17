@@ -281,6 +281,15 @@ you want.
 
 ## Default Options
 
+There are 2 alternatives to set default cdhist options:
+
+1. Set options in startup configuration file.
+2. Set options in shell initialization code.
+
+It's merely personal preference which you choose.
+
+### Set Options in Startup Configuration File
+
 You can add default options to a personal configuration file
 `~/.config/cdhist-flags.conf`. If that file exists then each line in
 the file will be concatenated and automatically prepended to your command
@@ -288,9 +297,25 @@ line options. The following options are sensible candidates to set as
 default options: `--purge-always`, `--git-relative`, `--no-user`,
 `--size`. Comments on any line are excluded.
 
-You are best to use the full name for options and to add them on
+You are best to use the full/long name for options and to add them on
 individual lines in the file so they are easy to read and easy to
 comment out temporarily etc.
+
+### Set Options in Shell Initialization Code
+
+Alternately, just set your preferred default options in your shell
+initialization code, e.g:
+
+```sh
+if type cdhist &>/dev/null; then
+    . <(cdhist -i "cd -arm 200")
+fi
+```
+
+The above sets `-a (--purge-always)`, `-r (--git-relative)`, and
+`-m (--size) 200` options as defaults for your `cd` command. Best to use
+the short option names to keep the imported shell function definition
+concise.
 
 ## Command Line Usage
 
