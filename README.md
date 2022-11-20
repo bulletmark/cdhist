@@ -80,7 +80,7 @@ Note, you can also type `string` at the `cd --` prompt to search.
 Show this help:
 
 ```sh
-$ cd -h|?
+$ cd -h
 ```
 
 ## Installation
