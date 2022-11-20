@@ -392,20 +392,23 @@ command name + options etc.
 
 4. Added `-a/--purge-always` option to always prune history.
 
-5. Added ability to set default options in
+5. Add `-n/--num-lines` to limit number of lines in output (for
+`-l/--list` and `--` commands).
+
+6. Added ability to set default options in
 `~/.config/cdhist-flags.conf`.
 
-6. Parses options/arguments using standard Python argparse.
+7. Parses options/arguments using standard Python argparse.
 
-7. Let setuptools build the main program stub rather than install our
+8. Let setuptools build the main program stub rather than install our
 own.
 
-8. Min Python version up from 3.4 to 3.7.
+9. Min Python version up from 3.4 to 3.7.
 
-9. Now installed as a Python package (directory) rather than a module
+10. Now installed as a Python package (directory) rather than a module
 (single file).
 
-10. Some of these changes slow the program down but architecture is
+11. Some of these changes slow the program down but architecture is
 changed so the program is run once only, not twice as it ran before.
 Second run was to save the new directory after `cd` had validated it,
 but now we validate it ourself before passing to `cd`. So net
@@ -413,11 +416,11 @@ performance is quicker than previous version, at least for the vanilla
 case of changing directory. This is not noticeable on normal PC's but is
 on constrained platforms like Raspberry Pi 2/3 using SD card.
 
-11. If you were previously setting `CDHISTSIZE` or `CDHISTTILDE` settings
+12. If you were previously setting `CDHISTSIZE` or `CDHISTTILDE` settings
 via environment variables then you now need to set them using `--size`
 and `--no-user` in `~/.config/cdhist-flags.conf`.
 
-12. The `-s` option to return a `cdhist.rc` file name for initialisation
+13. The `-s` option to return a `cdhist.rc` file name for initialisation
 is still currently supported for backwards-compatibility but is
 undocumented and depreciated (a temporary file is created and returned).
 It will likely eventually be removed.
