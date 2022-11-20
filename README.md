@@ -62,10 +62,10 @@ List the current stack and its indices (without prompting):
 $ cd -l
 ```
 
-Change immediately to directory having stack index "n":
+Change immediately to directory corresponding to stack index 4:
 
 ```sh
-$ cd -n
+$ cd -4
 ```
 
 Search back through stack for directory containing "string" and `cd`
