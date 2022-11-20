@@ -155,6 +155,8 @@ def main():
     opt.add_argument('-m', '--size', type=int, default=50,
                      help='maximum size of directory history '
                      '(default=%(default)s)')
+    opt.add_argument('-n', '--num-lines', type=int, default=-1,
+                     help='limit output to specified number of lines')
     opt.add_argument('-L', '--follow-links', action='store_false',
                      dest='follow_physical',
                      help='follow symbolic links (default=true)')

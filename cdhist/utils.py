@@ -19,10 +19,16 @@ def prompt(args, dirlist, *, reverse=False):
 
     tty = open('/dev/tty', 'w')
 
+    num = args.num_lines
+
+    if 0 <= num < len(dirlist):
+        dirlist = dirlist[:num] if reverse else dirlist[len(dirlist) - num:]
+    else:
+        num = len(dirlist)
+
     # List the worktrees
-    size = len(dirlist)
     for x, line in enumerate(reversed(dirlist) if reverse else dirlist, 1):
-        n = size - x
+        n = num - x
         tty.write(f'{n:3} {line}\n')
 
     if args.list:

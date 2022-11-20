@@ -322,7 +322,8 @@ concise.
 Type `cdhist -h` to view the usage summary:
 
 ```
-usage: cdhist [-i] [-h] [-p] [-a] [-g] [-r] [-u] [-l] [-m SIZE] [-L] [-P]
+usage: cdhist [-i] [-h] [-p] [-a] [-g] [-r] [-u] [-l] [-m SIZE]
+                   [-n NUM_LINES] [-L] [-P]
                    [directory]
 
 A Linux shell directory stack "cd history" function.
@@ -344,6 +345,8 @@ options:
   -u, --no-user         do not substitute "~" for home directory
   -l, --list            just list directory history
   -m SIZE, --size SIZE  maximum size of directory history (default=50)
+  -n NUM_LINES, --num-lines NUM_LINES
+                        limit output to specified number of lines
   -L, --follow-links    follow symbolic links (default=true)
   -P, --follow-physical
                         follow links to physical directory
