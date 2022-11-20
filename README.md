@@ -77,7 +77,7 @@ $ cd -/string
 
 Note, you can also type `string` at the `cd --` prompt to search.
 
-Show this help:
+Show help/usage:
 
 ```sh
 $ cd -h
