@@ -3,10 +3,11 @@
 [![AUR](https://img.shields.io/aur/version/cdhist)](https://aur.archlinux.org/packages/cdhist/)
 
 [cdhist](http://github.com/bulletmark/cdhist) is a utility which
-provides a Linux shell **cd history** directory stack. A shell `cd`
-wrapper function calls cdhist to intercept your typed `cd` command and
-maintain an ordered stack of all directories you have previously visited
-which can be listed and quickly navigated to.
+provides a Linux shell **cd history** directory stack. Hooks recognize
+working directory changes and maintain an ordered stack of all
+directories you have previously visited. Additionally one may list and
+quickly navigate to directories on the stack via a shell `cd` wrapper
+function calling cdhist.
 
 [cdhist](http://github.com/bulletmark/cdhist) can also be used with the
 [Command Line Fuzzy Finder](https://github.com/junegunn/fzf) `fzf` to
@@ -105,10 +106,10 @@ $ sudo pip3 install -U .
 
 Each user who wants to use the cdhist facility should add the following
 lines to their `~/.bashrc` or `~.zshrc` file (after where your PATH is
-set up so that the command `cdhist` can be found). This creates the `cd`
-wrapper command in your interactive shell session as a tiny function.
-Note you can [customize the command name](#alternative-command-name) if
-you want.
+set up so that the command `cdhist` can be found). This installs hooks
+and creates the `cd` wrapper command in your interactive shell session
+as a tiny function.  Note you can [customize the command
+name](#alternative-command-name) if you want.
 
 ```sh
 if type cdhist &>/dev/null; then
@@ -127,25 +128,6 @@ environment to have `fzf` search the directories recorded by cdhist:
 
 ```sh
 export FZF_ALT_C_COMMAND="cat $HOME/.cd_history"
-```
-
-Since `fzf` version 0.31.0, you also should make a small change to the
-way you source the `fzf` completion and key-binding files into your
-shell, e.g. in your `~/.bashrc`. The following is a typical script to
-load `fzf` except the source line must be changed to do an "on the
-fly" edit of `builtin cd` to regular `cd`. E.g:
-
-```sh
-for _d in /usr/share/fzf /usr/share/fzf/shell /usr/share/doc/fzf/examples \
-          /usr/share/bash-completion/completions/fzf ; do
-    if [[ -d $_d ]]; then
-        for _f in $_d/key-bindings.bash $_d/completion.bash; do
-            if [[ -f $_f ]]; then
-                . <(sed 's/builtin cd/cd/' $_f)
-            fi
-        done
-    fi
-done
 ```
 
 After doing this (and reloading your shell session), you can use the

@@ -11,9 +11,9 @@ from . import utils
 
 # Following is template for the shell code injected into your session
 SHELLCODE = '''
-!cmd() {
+%cmd() {
     local d
-    d=$(!prog "$@")
+    d=$(%prog "$@")
 
     if [ $? -ne 0 ]; then
         return 0
@@ -21,6 +21,37 @@ SHELLCODE = '''
 
     builtin cd -- "$d"
 }
+
+# ======================================================================
+# Hook to add new entries to the history
+
+if [[ -n $BASH_VERSION ]]; then
+    __cdhist_oldpwd="$(pwd)"
+
+    function __cdhist_prompt_hook() {
+        local -r retval pwd_tmp
+        retval="$?"
+        pwd_tmp="$(pwd)"
+
+        if [[ $__cdhist_oldpwd != "$pwd_tmp" ]]; then
+            __cdhist_oldpwd="$pwd_tmp"
+            cdhist "$__cdhist_oldpwd" >/dev/null
+        fi
+
+        return "${retval}"
+    }
+
+    if [[ ${PROMPT_COMMAND:=} != *'__cdhist_prompt_hook'* ]]; then
+        PROMPT_COMMAND="__cdhist_prompt_hook;${PROMPT_COMMAND#;}"
+    fi
+elif [[ -n $ZSH_VERSION ]]; then
+    function __cdhist_chpwd_hook() {
+        cdhist "$(pwd)" >/dev/null
+    }
+
+    autoload -Uz add-zsh-hook
+    add-zsh-hook chpwd __cdhist_chpwd_hook
+fi
 '''
 
 # Following is default installed command name but you can change it
@@ -38,7 +69,7 @@ def init_code(args):
     # We need to change the template delimiter because the standard
     # delimiter "$" is too common in regular shell code .
     class CTemplate(Template):
-        delimiter = '!'
+        delimiter = '%'
 
     cmd = args.directory or DEFCMD
     prog = sys.argv[0]
