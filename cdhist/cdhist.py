@@ -13,13 +13,8 @@ from . import utils
 SHELLCODE = '''
 %cmd() {
     local d
-    d=$(%prog "$@")
-
-    if [ $? -ne 0 ]; then
-        return 0
-    fi
-
-    builtin cd -- "$d"
+    # shellcheck disable=SC2164
+    d="$(%prog "$@")" && builtin cd -- "$d"
 }
 
 # ======================================================================
