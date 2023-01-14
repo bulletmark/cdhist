@@ -49,13 +49,16 @@ def init_code(args):
 
     return CTemplate(SHELLCODE.strip()).substitute(cmd=cmd, prog=prog)
 
-def write_cd_hist(hist):
+def write_cd_hist(hist, maxsize, purge):
     'Write the passed history stack to the history file'
     # Ensure private history file
     os.umask(0o177)
 
+    if purge:
+        hist = [p for p in hist if os.path.exists(p)]
+
     try:
-        CDHISTFILE.write_text('\n'.join(hist) + '\n')
+        CDHISTFILE.write_text('\n'.join(hist[:maxsize]) + '\n')
     except Exception:
         pass
 
@@ -211,8 +214,7 @@ def main():
     hist = fetch_cd_hist(args)
 
     if args.purge:
-        newhist = [p for p in hist if os.path.exists(p)]
-        write_cd_hist(newhist[:args.size])
+        write_cd_hist(hist, args.size, True)
         return
 
     args.search = search
@@ -244,11 +246,7 @@ def main():
 
     path = str(path)
     newhist = [path] + [p for p in hist if p != path]
-
-    if args.purge_always:
-        newhist = [p for p in newhist if os.path.exists(p)]
-
-    write_cd_hist(newhist[:args.size])
+    write_cd_hist(newhist, args.size, args.purge_always)
     print(path)
 
 if __name__ == '__main__':
