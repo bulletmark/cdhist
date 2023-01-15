@@ -11,7 +11,7 @@ here = Path(__file__).resolve().parent
 
 setup(
     name=name,
-    version='3.4',
+    version='3.5',
     description='Program to provide a Linux cd history directory stack',
     long_description=here.joinpath('README.md').read_text(),
     long_description_content_type="text/markdown",

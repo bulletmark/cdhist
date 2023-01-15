@@ -203,17 +203,17 @@ $ pwd
 
 # List worktrees using standard git command:
 $ git worktree list
-/home/mark/src/myprog       cbbe856 [main]
-/home/mark/src/development  a1bf827 [development]
-/home/mark/src/milestone1   c40f826 [milestone1]
-/home/mark/src/test         e2be219 [test]
+/home/mark/src/myprog       f76b8e0 [main]
+/home/mark/src/development  9796714 [development]
+/home/mark/src/milestone1   bc921b8 [milestone1]
+/home/mark/src/test         e6d965a [test]
 
-# Alternately, usd cdhist to list worktrees and choose one to navigate to:
+# Alternately, use cdhist to list worktrees and choose one to navigate to:
 $ cd -g
-  0 ~/src/myprog      cbbe856 [main]
-  1 ~/src/development a1bf827 [development]
-  2 ~/src/milestone1  c40f826 [milestone1]
-  3 ~/src/test        e2be219 [test]
+  3 ~/src/development 9796714 [development]
+  2 ~/src/milestone1  bc921b8 [milestone1]
+  1 ~/src/test        e6d965a [test]
+  0 ~/src/myprog      f76b8e0 [main]
 Select index [or <enter> to quit]: 2
 
 $ pwd
@@ -230,13 +230,19 @@ $ pwd
 Instead of having to type the full git repository directory name you
 merely are prompted with a list and enter it's index. Or just directly
 enter the branch name (or commit hash). The directories are displayed in
-the same order as the output of the `git worktree list` command. You
-only need to enter as much of the branch name, or commit hash, as needed
-to be unique. Note that `cd -g` nicely presents paths based from your
-HOME directory with a tilde (`~`) unlike the longer full path displayed
-by `git worktree list` (although you can change that with the
-`-u/--no-user` option, likely set as a [default
-option](#default-options)).
+the same order as the output of the `git worktree list` command, except
+that the git directory corresponding to the current working directory is
+shown first (index 0) consistent with how the current directory is shown
+at index 0 for normal cd history and thus conveniently showing you which
+git worktree you are currently in which `git worktree list`
+unfortunately does not show.
+
+In you enter text instead of an index, you only need to enter as much of
+the branch name, or commit hash, as needed to be unique. Note that `cd
+-g` nicely presents paths based from your HOME directory with a tilde
+(`~`) unlike the longer full path displayed by `git worktree list`
+(although you can change that with the `-u/--no-user` option, likely set
+as a [default option](#default-options)).
 
 ### Relative Git Worktree Directories
 
@@ -247,10 +253,10 @@ you can enable it in cdhist by adding the `-r/--relative` option, e.g:
 
 ```sh
 $ cd -gr
-  0 . cbbe856      [main]
-  1 ../development a1bf827 [development]
-  2 ../milestone1  c40f826 [milestone1]
-  3 ../test        e2be219 [test]
+  3 ../development 9796714 [development]
+  2 ../milestone1  bc921b8 [milestone1]
+  1 ../test        e6d965a [test]
+  0 .              f76b8e0 [main]
 Select index [or <enter> to quit]:
 ```
 

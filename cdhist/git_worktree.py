@@ -3,12 +3,25 @@
 import os
 import sys
 import subprocess
+from collections import deque
 from dataclasses import dataclass
 from pathlib import Path
 
 from . import utils
 
 HASH_LEN = 7
+
+def get_level(path, cwd):
+    'Get level at which cwd is within given paths parents'
+    if path == cwd:
+        level = 0
+    else:
+        try:
+            level = len(path.parents) - path.parents.index(cwd)
+        except Exception:
+            level = sys.maxsize
+
+    return level
 
 @dataclass
 class Tree:
@@ -28,9 +41,10 @@ class Trees:
         if res.returncode != 0:
             return False
 
-        self.trees = []
-        self.paths = []
+        trees = deque()
         tree = None
+        level = level_index = None
+        cwd = Path.cwd()
         for line in res.stdout.splitlines():
             line = line.strip()
             if not line:
@@ -50,9 +64,14 @@ class Trees:
                 elif not args.no_user:
                     path_u = Path(utils.unexpanduser(str(path)))
 
+                tlevel = get_level(path, cwd)
+                if level is None or tlevel < level:
+                    level = tlevel
+                    level_index = len(trees)
+
                 tree = Tree(path, path_u)
-                self.trees.append(tree)
-                self.paths.append(path)
+                trees.append(tree)
+
             elif field == 'HEAD':
                 if tree:
                     tree.head = rest[:HASH_LEN]
@@ -63,6 +82,16 @@ class Trees:
                 if tree:
                     tree.comment = field
 
+        # Move the worktree for the current working directory to the
+        # front of the list
+        if len(trees) > 0 and level_index >= 0:
+            trees.rotate(-level_index)
+            tree = trees.popleft()
+            trees.rotate(level_index)
+            trees.append(tree)
+
+        self.paths = [t.path for t in trees]
+        self.trees = trees
         return True
 
     def get_path_from_branch(self, text):
