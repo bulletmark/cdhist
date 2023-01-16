@@ -11,18 +11,6 @@ from . import utils
 
 HASH_LEN = 7
 
-def get_level(path, cwd):
-    'Get level at which cwd is within given paths parents'
-    if path == cwd:
-        level = 0
-    else:
-        try:
-            level = len(path.parents) - path.parents.index(cwd)
-        except Exception:
-            level = sys.maxsize
-
-    return level
-
 @dataclass
 class Tree:
     'Wrapper for individual worktree'
@@ -43,8 +31,10 @@ class Trees:
 
         trees = deque()
         tree = None
-        level = level_index = None
         cwd = Path.cwd()
+        cwd_parents = list(cwd.parents)
+        level = len(cwd_parents) + 2
+        level_index = 0
         for line in res.stdout.splitlines():
             line = line.strip()
             if not line:
@@ -60,13 +50,20 @@ class Trees:
                 path_u = path = Path(rest)
 
                 if args.git_relative:
-                    path_u = os.path.relpath(path)
+                    path_u = Path(os.path.relpath(path))
                 elif not args.no_user:
                     path_u = Path(utils.unexpanduser(str(path)))
 
-                tlevel = get_level(path, cwd)
-                if level is None or tlevel < level:
-                    level = tlevel
+                if path == cwd:
+                    plevel = 0
+                else:
+                    try:
+                        plevel = cwd_parents.index(path) + 1
+                    except Exception:
+                        plevel = len(cwd_parents) + 1
+
+                if plevel < level:
+                    level = plevel
                     level_index = len(trees)
 
                 tree = Tree(path, path_u)
@@ -84,14 +81,14 @@ class Trees:
 
         # Move the worktree for the current working directory to the
         # front of the list
-        if len(trees) > 0 and level_index >= 0:
+        if len(trees) > 1:
             trees.rotate(-level_index)
             tree = trees.popleft()
             trees.rotate(level_index)
             trees.append(tree)
 
-        self.paths = [t.path for t in trees]
         self.trees = trees
+        self.paths = [t.path for t in trees]
         return True
 
     def get_path_from_branch(self, text):
