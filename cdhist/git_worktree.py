@@ -131,11 +131,10 @@ def parse_args(args):
     if not trees.fetch(args):
         return None
 
-    if args.directory and not args.list:
-        path = None
-        arg = args.directory
+    arg = args.directory
+    if arg and not args.list:
         if arg[0] == '-':
-            path = utils.check_digit(arg[1:], trees.paths)
+            path = utils.check_digit(arg[1:] or '1', trees.paths)
         else:
             path = trees.get_path_from_branch(arg)
 
