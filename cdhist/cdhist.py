@@ -151,8 +151,13 @@ def main():
     opt.add_argument('-r', '--git-relative', action='store_true',
                      help='show relative git worktree paths instead '
                      'of absolute')
+    opt.add_argument('-R', '--no-git-relative', action='store_false',
+                     dest='git_relative',
+                     help='do not show relative git worktree paths')
     opt.add_argument('-u', '--no-user', action='store_true',
                      help='do not substitute "~" for home directory')
+    opt.add_argument('-U', '--user', action='store_false', dest='no_user',
+                     help='do substitute "~" for home directory')
     opt.add_argument('-l', '--list', action='store_true',
                      help='just list directory history')
     opt.add_argument('-m', '--size', type=int, default=50,

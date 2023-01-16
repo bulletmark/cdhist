@@ -294,6 +294,10 @@ There are 2 alternatives to set default cdhist options:
 
 It's merely personal preference which you choose.
 
+Note if you set `-r/--git-relative` or `-u/--no-user` options as default
+then options `-R/--no-git-relative` and `-U/--user` exist to
+allow you to temporarily override those defaults.
+
 ### Set Options in Startup Configuration File
 
 You can add default options to a personal configuration file
@@ -328,7 +332,7 @@ concise.
 Type `cdhist -h` to view the usage summary:
 
 ```
-usage: cdhist [-i] [-h] [-p] [-a] [-g] [-r] [-u] [-l] [-m SIZE]
+usage: cdhist [-i] [-h] [-p] [-a] [-g] [-r] [-R] [-u] [-U] [-l] [-m SIZE]
                    [-n NUM_LINES] [-L] [-P]
                    [directory]
 
@@ -348,7 +352,10 @@ options:
   -a, --purge-always    always purge non-existent directories every write
   -g, --git             show git worktree directories instead
   -r, --git-relative    show relative git worktree paths instead of absolute
+  -R, --no-git-relative
+                        do not show relative git worktree paths
   -u, --no-user         do not substitute "~" for home directory
+  -U, --user            do substitute "~" for home directory
   -l, --list            just list directory history
   -m SIZE, --size SIZE  maximum size of directory history (default=50)
   -n NUM_LINES, --num-lines NUM_LINES
