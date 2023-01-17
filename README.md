@@ -271,7 +271,7 @@ alternately, want to use a completely separate command for the git
 worktree functionality. To do this, simply add your desired command name
 and the git option as an extra argument to the `cdhist` command in your
 shell initialization code. E.g, to use the command name `wt` for git
-worktree functionality (only), change/add the following in your
+worktree functionality (only), add the following in your
 `~/.bashrc` or `~.zshrc` file:
 
 ```sh
@@ -292,7 +292,7 @@ There are 2 alternatives to set default cdhist options:
 1. Set options in startup configuration file.
 2. Set options in shell initialization code.
 
-It's merely personal preference which you choose.
+It's largely personal preference which you choose.
 
 Note if you set `-r/--git-relative` or `-u/--no-user` options as default
 then options `-R/--no-git-relative` and `-U/--user` exist to
@@ -326,6 +326,11 @@ The above sets `-a (--purge-always)`, `-r (--git-relative)`, and
 `-m (--size) 200` options as defaults for your `cd` command. Best to use
 the short option names to keep the imported shell function definition
 concise.
+
+An advantage of this 2nd approach to setting default options is that you
+can create one alias for your `cd` command, and another alias for your
+git worktree command (e.g. `wt`), and both can have different cdhist
+options.
 
 ## Command Line Usage
 
