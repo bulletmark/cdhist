@@ -170,6 +170,8 @@ def main():
                      help='follow symbolic links (default=true)')
     opt.add_argument('-P', '--follow-physical', action='store_true',
                      help='follow links to physical directory')
+    opt.add_argument('-V', '--version', action='store_true',
+                     help='just output version')
     opt.add_argument('directory', nargs='?', help='directory (or '
                      'branch for git worktree) to cd to, '
                      'or "--" to list history and prompt, '
@@ -198,6 +200,10 @@ def main():
 
     if args.help:
         return opt.format_help().strip()
+
+    if args.version:
+        from .version import Version
+        return Version()
 
     # Just output shell init code if asked
     if args.init:

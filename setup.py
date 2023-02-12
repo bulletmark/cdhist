@@ -11,7 +11,7 @@ here = Path(__file__).resolve().parent
 
 setup(
     name=name,
-    version='3.5.2',
+    version='3.6',
     description='Program to provide a Linux cd history directory stack',
     long_description=here.joinpath('README.md').read_text(),
     long_description_content_type="text/markdown",
@@ -21,6 +21,9 @@ setup(
     keywords='bash zsh cd fzf git worktree',
     license='GPLv3',
     python_requires='>=3.7',
+    install_requires=[
+        'importlib-metadata >= 1.0 ; python_version < "3.8"',
+    ],
     classifiers=[
         'Programming Language :: Python :: 3',
     ],

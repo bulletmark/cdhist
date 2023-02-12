@@ -338,7 +338,7 @@ Type `cdhist -h` to view the usage summary:
 
 ```
 usage: cdhist [-i] [-h] [-p] [-a] [-g] [-r] [-R] [-u] [-U] [-l] [-m SIZE]
-                   [-n NUM_LINES] [-L] [-P]
+                   [-n NUM_LINES] [-L] [-P] [-V]
                    [directory]
 
 A Linux shell directory stack "cd history" function.
@@ -368,6 +368,7 @@ options:
   -L, --follow-links    follow symbolic links (default=true)
   -P, --follow-physical
                         follow links to physical directory
+  -V, --version         just output version
 
 Note you can set default options in ~/.config/cdhist-flags.conf.
 ```
