@@ -154,5 +154,3 @@ def parse_args(args):
         sys.exit(f'fatal: no worktree for "{arg}".')
 
     return path
-
-# vim: se et:

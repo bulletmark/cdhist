@@ -96,5 +96,3 @@ def check_search(arg, dirlist, *, list_is_paths=False):
 
         if complete:
             sys.exit(f'No match on "{arg}".')
-
-# vim: se et:
