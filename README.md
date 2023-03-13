@@ -358,9 +358,9 @@ options:
   -g, --git             show git worktree directories instead
   -r, --git-relative    show relative git worktree paths instead of absolute
   -R, --no-git-relative
-                        do not show relative git worktree paths
+                        do not show relative git worktree paths (default)
   -u, --no-user         do not substitute "~" for home directory
-  -U, --user            do substitute "~" for home directory
+  -U, --user            do substitute "~" for home directory (default)
   -l, --list            just list directory history
   -m SIZE, --size SIZE  maximum size of directory history (default=50)
   -n NUM_LINES, --num-lines NUM_LINES
