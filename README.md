@@ -104,7 +104,7 @@ $ sudo pip3 install -U .
 ## Setup
 
 Each user who wants to use the cdhist facility should add the following
-lines to their `~/.bashrc` or `~.zshrc` file (after where your PATH is
+lines to their `~/.bashrc` or `~/.zshrc` file (after where your PATH is
 set up so that the command `cdhist` can be found). This creates the `cd`
 wrapper command in your interactive shell session as a tiny function.
 Note you can [customize the command name](#alternative-command-name) if
@@ -177,7 +177,7 @@ utility and just use an alternative unique command name. To do this,
 simply add your desired command name as an extra argument to the
 `cdhist` command in your shell initialization code. E.g, to use the
 command name `xd` rather than `cd`, use the following in
-your `~/.bashrc` or `~.zshrc` file:
+your `~/.bashrc` or `~/.zshrc` file:
 
 ```sh
 if type cdhist &>/dev/null; then
@@ -272,7 +272,7 @@ worktree functionality. To do this, simply add your desired command name
 and the git option as an extra argument to the `cdhist` command in your
 shell initialization code. E.g, to use the command name `wt` for git
 worktree functionality (only), add the following in your
-`~/.bashrc` or `~.zshrc` file:
+`~/.bashrc` or `~/.zshrc` file:
 
 ```sh
 if type cdhist &>/dev/null; then
