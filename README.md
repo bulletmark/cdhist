@@ -437,7 +437,8 @@ on constrained platforms like Raspberry Pi 2/3 using SD card.
 
 12. If you were previously setting `CDHISTSIZE` or `CDHISTTILDE` settings
 via environment variables then you now need to set them using `--size`
-and `--no-user` in `~/.config/cdhist-flags.conf`.
+and `--no-user` in `~/.config/cdhist-flags.conf`, or add those options
+in your shell initialization code.
 
 13. The `-s` option to return a `cdhist.rc` file name for initialisation
 is still currently supported for backwards-compatibility but is
