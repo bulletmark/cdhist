@@ -23,7 +23,7 @@ dependencies = [
 Homepage = "https://github.com/bulletmark/cdhist"
 
 [project.scripts]
-cdhist = "cdhist:main"
+cdhist = "cdhist.cdhist:main"
 
 [project.license]
 text = "GPLv3"
