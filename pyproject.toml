@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=61.0", "setuptools-scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cdhist"
+description = "Program to provide a Linux cd history directory stack"
+readme = "README.md"
+authors = [
+  {name = "Mark Blakeney", email = "mark.blakeney@bullet-systems.net"},
+]
+requires-python = ">=3.7"
+keywords = ["bash", "zsh", "cd", "fzf", "git", "worktree"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+]
+dynamic = ["version"]
+dependencies = [
+  "importlib-metadata >= 1.0; python_version < '3.8'",
+]
+
+[project.urls]
+Homepage = "https://github.com/bulletmark/cdhist"
+
+[project.scripts]
+cdhist = "cdhist:main"
+
+[project.license]
+text = "GPLv3"
+
+[tool.setuptools_scm]
+version_scheme = "post-release"
+
+[tool.mypy]
+implicit_optional = true
+no_strict_optional = true
+warn_no_return = false
+allow_untyped_globals = true
+allow_redefinition = true
+ignore_missing_imports = true
+
+[tool.edit-lint]
+linters = [
+  "ruff",
+  "flake8",
+  "mypy",
+]
+
+# vim:se sw=2:

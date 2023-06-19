@@ -89,21 +89,24 @@ Arch users can install [cdhist from the
 AUR](https://aur.archlinux.org/packages/cdhist/) and skip to the next
 section.
 
-Ensure `pip3` is installed. Python 3.7 or later is required.
+Python 3.7 or later is required. Note [cdhist is on
+PyPI](https://pypi.org/project/cdhist/) so just ensure that
+[`pipx`](https://pypa.github.io/pipx/) is installed then type the
+following:
 
-Note [cdhist is on PyPI](https://pypi.org/project/cdhist/) so you can
-just type `sudo pip3 install -U cdhist`. Or do the following to install
-from this repository:
+```
+$ pipx install cdhist
+```
 
-```sh
-$ git clone http://github.com/bulletmark/cdhist
-$ cd cdhist
-$ sudo pip3 install -U .
+To upgrade:
+
+```
+$ pipx upgrade cdhist
 ```
 
 ## Setup
 
-Each user who wants to use the cdhist facility should add the following
+A user who wants to use the cdhist facility should add the following
 lines to their `~/.bashrc` or `~/.zshrc` file (after where your PATH is
 set up so that the command `cdhist` can be found). This creates the `cd`
 wrapper command in your interactive shell session as a tiny function.
@@ -368,7 +371,7 @@ options:
   -L, --follow-links    follow symbolic links (default=true)
   -P, --follow-physical
                         follow links to physical directory
-  -V, --version         just output version
+  -V, --version         just output cdhist version
 
 Note you can set default options in ~/.config/cdhist-flags.conf.
 ```
@@ -379,21 +382,6 @@ Regular `cd`, e.g. as provided by the bash builtin, offers some esoteric
 command line options such as `-e` and `-@`, and shell options such as
 `autocd`, `cdspell`, `cdable_vars`. These rarely used options are not
 supported by cdhist.
-
-## Upgrade
-
-```sh
-$ cd cdhist  # Source dir, as above
-$ git pull
-$ sudo pip3 install -U .
-```
-
-## Removal
-
-```sh
-$ unset cd
-$ sudo pip3 uninstall cdhist
-```
 
 ## Major Version Change History
 

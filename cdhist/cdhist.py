@@ -171,7 +171,7 @@ def main():
     opt.add_argument('-P', '--follow-physical', action='store_true',
                      help='follow links to physical directory')
     opt.add_argument('-V', '--version', action='store_true',
-                     help='just output version')
+                     help=f'just output {PROG} version')
     opt.add_argument('directory', nargs='?', help='directory (or '
                      'branch for git worktree) to cd to, '
                      'or "--" to list history and prompt, '
@@ -190,8 +190,8 @@ def main():
     cnffile = CNFFILE.expanduser()
     if cnffile.exists():
         with cnffile.open() as fp:
-            cnflines = [re.sub(r'#.*$', '', line).strip() for line in fp]
-        cnflines = ' '.join(cnflines).strip()
+            lines = [re.sub(r'#.*$', '', line).strip() for line in fp]
+        cnflines = ' '.join(lines).strip()
     else:
         cnflines = ''
 
@@ -201,8 +201,19 @@ def main():
         return opt.format_help().strip()
 
     if args.version:
-        from .version import Version
-        return Version()
+        if sys.version_info >= (3, 8):
+            from importlib import metadata
+        else:
+            import importlib_metadata as metadata
+
+        pkg = Path(sys.argv[0]).stem.replace('-', '_')
+        try:
+            version = metadata.version(pkg)
+        except Exception:
+            version = '?'
+
+        print(version)
+        return
 
     # Just output shell init code if asked
     if args.init:
@@ -261,4 +272,3 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main())
-
