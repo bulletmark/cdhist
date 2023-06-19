@@ -212,8 +212,7 @@ def main():
         except Exception:
             version = '?'
 
-        print(version)
-        return
+        return version
 
     # Just output shell init code if asked
     if args.init:
