@@ -106,7 +106,7 @@ def parse_args_cd(args, hist):
         path = None
         pathstr = args.directory
         if pathstr[0] == '-':
-            if len(pathstr) == 1:
+            if len(pathstr) == 1 and len(hist) > 1:
                 # A normal shell can't cd to OLDPWD when it is not set (e.g.
                 # just after login). But we have non-volatile history so
                 # may as well use it :)
