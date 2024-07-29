@@ -3,14 +3,16 @@
 import sys
 from pathlib import Path
 
-HOME = Path('~').expanduser()
-HOMESTR = str(HOME)
+HOME = Path.home()
 
-def unexpanduser(path):
-    'Return string path with $HOME in string path substituted with ~'
-    if path.startswith(HOMESTR):
-        path = path.replace(HOMESTR, '~', 1)
-    return path
+def unexpanduser(path: str | Path) -> str:
+    'Return path name, with $HOME replaced by ~ (opposite of Path.expanduser())'
+    ppath = Path(path)
+
+    if ppath.parts[:len(HOME.parts)] != HOME.parts:
+        return str(path)
+
+    return str(Path('~', *ppath.parts[len(HOME.parts):]))
 
 def prompt(args, dirlist, *, reverse=False):
     'Present list of dirs to user and prompt for selection'

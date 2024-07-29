@@ -52,7 +52,7 @@ class Trees:
                 if args.git_relative:
                     path_u = Path(os.path.relpath(path))
                 elif not args.no_user:
-                    path_u = Path(utils.unexpanduser(str(path)))
+                    path_u = Path(utils.unexpanduser(path))
 
                 if path == cwd:
                     plevel = 0
