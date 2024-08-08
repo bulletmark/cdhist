@@ -132,23 +132,27 @@ environment to have `fzf` search the directories recorded by cdhist:
 export FZF_ALT_C_COMMAND="cat $HOME/.cd_history"
 ```
 
-Since `fzf` version 0.31.0, you also should make a small change to the
-way you source the `fzf` completion and key-binding files into your
-shell, e.g. in your `~/.bashrc`. The following is a typical script to
-load `fzf` except the source line must be changed to do an "on the
-fly" edit of `builtin cd` to regular `cd`. E.g:
+You also should make a small change to the way you source the `fzf`
+key-bindings and completions into your shell to ensure that the `cd`
+command is not aliased to `builtin cd` and instead invokes the `cdhist`
+command.
+
+E.g. for `bash`, in your `~/.bashrc`, instead of `eval "$(fzf --bash)"`
+as suggested by the [`fzf` documentation](
+https://github.com/junegunn/fzf?tab=readme-ov-file#setting-up-shell-integration),
+use:
 
 ```sh
-for _d in /usr/share/fzf /usr/share/fzf/shell /usr/share/doc/fzf/examples \
-          /usr/share/bash-completion/completions/fzf ; do
-    if [[ -d $_d ]]; then
-        for _f in $_d/key-bindings.bash $_d/completion.bash; do
-            if [[ -f $_f ]]; then
-                . <(sed 's/builtin cd/cd/' $_f)
-            fi
-        done
-    fi
-done
+eval "$(fzf --bash | sed 's/builtin cd/cd/g')"
+```
+
+E.g. for `zsh`, in your `~/.zshrc`, instead of `source <(fzf --zsh)`
+as suggested by the [`fzf` documentation](
+https://github.com/junegunn/fzf?tab=readme-ov-file#setting-up-shell-integration),
+use:
+
+```sh
+source <(fzf --zsh | sed 's/builtin cd/cd/g')
 ```
 
 After doing this (and reloading your shell session), you can use the
