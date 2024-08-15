@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 'A Linux shell directory stack "cd history" function.'
-import os
-import sys
 import argparse
-import shlex
+import os
 import re
+import shlex
+import sys
 from pathlib import Path
 
 from . import utils
@@ -14,9 +14,10 @@ SHELLCODE = '''
 !cmd() {
     local d
     d=$(!prog "$@")
+    local r=$?
 
-    if [ $? -ne 0 ]; then
-        return 0
+    if [ $r -ne 0 ]; then
+        return $r
     fi
 
     builtin cd -- "$d"
@@ -132,7 +133,7 @@ def main():
     #     quit.
 
     # Parse arguments
-    opt = argparse.ArgumentParser(description=__doc__.strip(), add_help=False,
+    opt = argparse.ArgumentParser(description=__doc__, add_help=False,
             epilog=f'Note you can set default options in {CNFFILE}.')
     opt.add_argument('-i', '--init', action='store_true',
                      help='output shell initialization code. Optionally '

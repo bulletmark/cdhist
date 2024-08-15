@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 'Shell wrapper to conveniently cd between git worktrees.'
 import os
-import sys
 import subprocess
+import sys
 from collections import deque
 from dataclasses import dataclass
 from pathlib import Path
