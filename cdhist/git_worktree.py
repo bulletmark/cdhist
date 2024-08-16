@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 'Shell wrapper to conveniently cd between git worktrees.'
+from __future__ import annotations
+
 import os
 import subprocess
 import sys
+from argparse import Namespace
 from collections import deque
 from dataclasses import dataclass
 from pathlib import Path
@@ -16,20 +19,20 @@ class Tree:
     'Wrapper for individual worktree'
     path: Path
     path_u: Path
-    head: str = None
-    branch: str = None
-    comment: str = None
+    head: str | None = None
+    branch: str | None = None
+    comment: str | None = None
 
 class Trees:
     'Wrapper to manage the collection of worktrees'
-    def fetch(self, args):
+    def fetch(self, args: Namespace) -> bool:
         'Run git and get list of worktrees'
         res = subprocess.run('git worktree list --porcelain'.split(),
                             stdout=subprocess.PIPE, text=True)
         if res.returncode != 0:
             return False
 
-        trees = deque()
+        trees: deque = deque()
         tree = None
         cwd = Path.cwd()
         cwd_parents = list(cwd.parents)
@@ -45,6 +48,7 @@ class Trees:
                 field, rest = line.split(maxsplit=1)
             else:
                 field = line
+                rest = ''
 
             if field == 'worktree':
                 path_u = path = Path(rest)
@@ -91,7 +95,7 @@ class Trees:
         self.paths = [t.path for t in trees]
         return True
 
-    def get_path_from_branch(self, text):
+    def get_path_from_branch(self, text: str) -> Path | None:
         'Return 1st branch (then hash) that starts with given text'
         for t in self.trees:
             if t.branch and t.branch.startswith(text):
@@ -103,7 +107,7 @@ class Trees:
 
         return None
 
-    def build_output(self):
+    def build_output(self) -> list[str]:
         'Present list of worktrees to user and prompt for selection'
         # List the worktrees
         pw = max(len(str(t.path_u)) for t in self.trees)
@@ -121,7 +125,7 @@ class Trees:
 
         return lines
 
-def parse_args(args):
+def parse_args(args: Namespace) -> Path | None:
     'Parse command line for git worktree functionality'
     trees = Trees()
 
@@ -136,16 +140,14 @@ def parse_args(args):
             path = trees.get_path_from_branch(arg)
 
     elif args.search:
-        path = utils.check_search(args.search, trees.paths,
-                                  list_is_paths=True)
+        path = utils.check_search(args.search, trees.paths)
     else:
         arg = utils.prompt(args, trees.build_output())
         if not arg:
             return None
 
         if len(arg) > 1 and arg[0] == '/':
-            path = utils.check_search(arg[1:], trees.paths,
-                                    list_is_paths=True)
+            path = utils.check_search(arg[1:], trees.paths)
         else:
             path = utils.check_digit(arg, trees.paths) or \
                     trees.get_path_from_branch(arg)

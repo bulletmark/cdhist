@@ -6,15 +6,12 @@ build-backend = "setuptools.build_meta"
 name = "cdhist"
 description = "Program to provide a Linux cd history directory stack"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 keywords = ["bash", "zsh", "cd", "fzf", "git", "worktree"]
 classifiers = [
   "Programming Language :: Python :: 3",
 ]
 dynamic = ["version"]
-dependencies = [
-  "importlib-metadata >= 1.0; python_version < '3.8'",
-]
 
 [[project.authors]]
 name = "Mark Blakeney"

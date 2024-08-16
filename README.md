@@ -89,7 +89,7 @@ Arch users can install [cdhist from the
 AUR](https://aur.archlinux.org/packages/cdhist/) and skip to the next
 section.
 
-Python 3.7 or later is required. Note [cdhist is on
+Python 3.8 or later is required. Note [cdhist is on
 PyPI](https://pypi.org/project/cdhist/) so just ensure that
 [`pipx`](https://pypa.github.io/pipx/) is installed then type the
 following:

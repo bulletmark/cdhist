@@ -1,10 +1,12 @@
 #!/usr/bin/python3
 'A Linux shell directory stack "cd history" function.'
-import argparse
+from __future__ import annotations
+
 import os
 import re
 import shlex
 import sys
+from argparse import SUPPRESS, ArgumentParser, Namespace
 from pathlib import Path
 
 from . import utils
@@ -32,7 +34,7 @@ PROG = Path(sys.argv[0]).stem.replace('_', '-')
 CNFFILE = Path(os.getenv('XDG_CONFIG_HOME', '~/.config'), f'{PROG}-flags.conf')
 CDHISTFILE = utils.HOME / '.cd_history'
 
-def init_code(args):
+def init_code(args: Namespace) -> str:
     'Return shell init code as string'
     from string import Template
 
@@ -50,7 +52,7 @@ def init_code(args):
 
     return CTemplate(SHELLCODE.strip()).substitute(cmd=cmd, prog=prog)
 
-def write_cd_hist(hist, maxsize, purge):
+def write_cd_hist(hist: list[str], maxsize: int, purge: bool) -> None:
     'Write the passed history stack to the history file'
     # Ensure private history file
     os.umask(0o177)
@@ -63,7 +65,7 @@ def write_cd_hist(hist, maxsize, purge):
     except Exception:
         pass
 
-def fetch_cd_hist(args):
+def fetch_cd_hist(args: Namespace) -> list[str]:
     'Fetch the current history stack'
     # Read the history stack from the file but always prepend the
     # current ($PWD) and previous ($OLDPWD, i,e ~-) directories for this
@@ -81,17 +83,17 @@ def fetch_cd_hist(args):
         hist = ''
 
     # Return the stack, removing duplicates and constraining the size
-    hist = dict.fromkeys(hist.splitlines(keepends=False))
+    histd = dict.fromkeys(hist.splitlines(keepends=False))
     pwd = os.getenv('PWD') or os.getcwd()
     oldpwd = os.getenv('OLDPWD')
 
     pwdlist = [path for path in (pwd, oldpwd) if path]
     for path in pwdlist:
-        hist.pop(path, None)
+        histd.pop(path, None)
 
-    return (pwdlist + list(hist))[:args.size]
+    return (pwdlist + list(histd))[:args.size]
 
-def parse_args_cd(args, hist):
+def parse_args_cd(args: Namespace, hist: list[str]) -> Path | None:
     'Parse arguments for the cd command'
     if args.list or sys.argv[-1] == '--':
         hist_u = hist if args.no_user else \
@@ -101,7 +103,7 @@ def parse_args_cd(args, hist):
             return None
 
         path = utils.check_digit(arg, hist, reverse=True) or \
-                utils.check_search(arg.lstrip('/'), hist)
+                utils.check_search(arg.lstrip('/'), [Path(d) for d in hist])
 
     elif args.directory:
         path = None
@@ -118,13 +120,13 @@ def parse_args_cd(args, hist):
         if not path:
             path = Path(pathstr)
     elif args.search:
-        path = utils.check_search(args.search, hist)
+        path = utils.check_search(args.search, [Path(d) for d in hist])
     else:
         path = utils.HOME
 
     return path
 
-def main():
+def main() -> str | int | None:
     'Main code'
     # Main returns a status code:
     # 0 = Directory written to stdout. Calling script should cd to that
@@ -133,14 +135,14 @@ def main():
     #     quit.
 
     # Parse arguments
-    opt = argparse.ArgumentParser(description=__doc__, add_help=False,
+    opt = ArgumentParser(description=__doc__, add_help=False,
             epilog=f'Note you can set default options in {CNFFILE}.')
     opt.add_argument('-i', '--init', action='store_true',
                      help='output shell initialization code. Optionally '
                      'specify alternative command name as argument, '
                      f'default="{DEFCMD}"')
     opt.add_argument('-s', '--shell', action='store_true',
-                     help=argparse.SUPPRESS)
+                     help=SUPPRESS)
     opt.add_argument('-h', '--help', action='store_true',
                      help='show help/usage')
     opt.add_argument('-p', '--purge', action='store_true',
@@ -202,10 +204,7 @@ def main():
         return opt.format_help().strip()
 
     if args.version:
-        if sys.version_info >= (3, 8):
-            from importlib import metadata
-        else:
-            import importlib_metadata as metadata
+        from importlib import metadata
 
         pkg = Path(sys.argv[0]).stem.replace('-', '_')
         try:
@@ -213,12 +212,13 @@ def main():
         except Exception:
             version = '?'
 
-        return version
+        print(version)
+        return None
 
     # Just output shell init code if asked
     if args.init:
         print(init_code(args))
-        return
+        return None
 
     # This is temporary back-compatibility code until the previously
     # provided but now depreciated -s/--shell option is removed. All
@@ -230,13 +230,13 @@ def main():
                 else Path(f'/tmp/{PROG}-{uid}.rc')
         shfile.write_text(init_code(args) + '\n')
         print(shfile)
-        return
+        return None
 
     hist = fetch_cd_hist(args)
 
     if args.purge:
         write_cd_hist(hist, args.size, True)
-        return
+        return None
 
     args.search = search
 
@@ -265,10 +265,11 @@ def main():
         except Exception:
             return f'"{path}" can not be resolved.'
 
-    path = str(path)
-    newhist = [path] + [p for p in hist if p != path]
+    pathstr = str(path)
+    newhist = [pathstr] + [p for p in hist if p != pathstr]
     write_cd_hist(newhist, args.size, args.purge_always)
-    print(path)
+    print(pathstr)
+    return None
 
 if __name__ == '__main__':
     sys.exit(main())

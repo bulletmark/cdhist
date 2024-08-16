@@ -3,9 +3,10 @@ PYNAME = $(subst -,_,$(NAME))
 
 check:
 	ruff check .
-	flake8 */*.py
-	mypy .
-	vermin -vv --exclude importlib.metadata --no-tips -i */*.py
+	flake8 $(NAME)/*.py
+	mypy $(NAME)/*.py
+	pyright $(NAME)/*.py
+	vermin -vv --no-tips -i $(NAME)/*.py
 
 build:
 	rm -rf dist

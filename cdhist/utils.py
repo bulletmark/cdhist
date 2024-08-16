@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 'Misc utility functions for cdhist'
+from __future__ import annotations
+
 import sys
+from argparse import Namespace
 from pathlib import Path
 
 HOME = Path.home()
@@ -14,7 +17,8 @@ def unexpanduser(path: str | Path) -> str:
 
     return str(Path('~', *ppath.parts[len(HOME.parts):]))
 
-def prompt(args, dirlist, *, reverse=False):
+def prompt(args: Namespace, dirlist: list[str], *,
+           reverse: bool = False) -> str | None:
     'Present list of dirs to user and prompt for selection'
     if not dirlist:
         sys.exit('fatal: no directories')
@@ -46,7 +50,7 @@ def prompt(args, dirlist, *, reverse=False):
 
     return ans
 
-def check_digit(arg, dirlist, *, reverse=False):
+def check_digit(arg: str, dirlist: list[str], *, reverse: bool = False):
     'Check if arg is number and then return indexed entry in dirlist'
     if not arg.isdigit():
         return None
@@ -60,12 +64,9 @@ def check_digit(arg, dirlist, *, reverse=False):
 
     return Path(dirlist[num])
 
-def check_search(arg, dirlist, *, list_is_paths=False):
+def check_search(arg: str, dirlist: list[Path]) -> Path | None:
     'Search for arg in given dirlist'
     from itertools import count
-
-    if not list_is_paths:
-        dirlist = [Path(p) for p in dirlist]
 
     # Perform a somewhat heuristic search. Iterate through all dirs and
     # look for match in final dir, then go up a level if no match and
@@ -98,3 +99,5 @@ def check_search(arg, dirlist, *, list_is_paths=False):
 
         if complete:
             sys.exit(f'No match on "{arg}".')
+
+    return None
