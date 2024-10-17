@@ -119,6 +119,24 @@ if type cdhist &>/dev/null; then
 fi
 ```
 
+## Alternative Command Name
+
+Some people may prefer not to alias their system `cd` command to this
+utility and just use an alternative unique command name. To do this,
+simply add your desired command name as an extra argument to the
+`cdhist` command in your shell initialization code. E.g, to use the
+command name `xd` rather than `cd`, use the following in
+your `~/.bashrc` or `~/.zshrc` file:
+
+```sh
+if type cdhist &>/dev/null; then
+    . <(cdhist -i xd)
+fi
+```
+
+Then log out/in, and then just type `xd /tmp` to change dir, `xd --` to see
+and select directories, etc.
+
 Then log out and back in again.
 
 ## FZF Integration
@@ -173,24 +191,6 @@ previews](https://github.com/junegunn/fzf/wiki/Configuring-shell-key-bindings#pr
 using `tree`, etc. Of course the cdhist native command `cd --` and
 other cdhist commands described above are still available, in addition
 to the `fzf` key binding.
-
-## Alternative Command Name
-
-Some people may prefer not to alias their system `cd` command to this
-utility and just use an alternative unique command name. To do this,
-simply add your desired command name as an extra argument to the
-`cdhist` command in your shell initialization code. E.g, to use the
-command name `xd` rather than `cd`, use the following in
-your `~/.bashrc` or `~/.zshrc` file:
-
-```sh
-if type cdhist &>/dev/null; then
-    . <(cdhist -i xd)
-fi
-```
-
-Then log out/in, and then just type `xd /tmp` to change dir, `xd --` to see
-and select directories, etc.
 
 ## GIT Worktree Integration
 
