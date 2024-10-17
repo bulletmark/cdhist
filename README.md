@@ -119,7 +119,7 @@ if type cdhist &>/dev/null; then
 fi
 ```
 
-## Alternative Command Name
+### Alternative Command Name
 
 Some people may prefer not to alias their system `cd` command to this
 utility and just use an alternative unique command name. To do this,
