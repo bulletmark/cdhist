@@ -131,6 +131,16 @@ environment to have `fzf` search the directories recorded by cdhist:
 ```sh
 export FZF_ALT_C_COMMAND="cat $HOME/.cd_history"
 ```
+or
+```sh
+export FZF_ALT_C_COMMAND="cdhist -p && cat $HOME/.cd_history"
+```
+
+If you prefer that directories that do not exist are excluded from `fzf`
+and your `cd` history (i.e. exclude directories that have been deleted
+since they were last visited). An alternative is to always exclude
+non-existent directories from your cd history by setting the
+`--prune-always` as a [default option](#default-options).
 
 You also should make a small change to the way you source the `fzf`
 key-bindings and completions into your shell to ensure that the `cd`
@@ -163,19 +173,6 @@ previews](https://github.com/junegunn/fzf/wiki/Configuring-shell-key-bindings#pr
 using `tree`, etc. Of course the cdhist native command `cd --` and
 other cdhist commands described above are still available, in addition
 to the `fzf` key binding.
-
-### Pruning Non-Existent Directories
-If you prefer that directories that do not exist are excluded from `fzf`
-and your `cd` history (i.e. exclude directories that have been deleted
-since they were last visited), then you can define the `fzf` command as:
-
-```sh
-export FZF_ALT_C_COMMAND="cdhist -p && cat $HOME/.cd_history"
-```
-
-An alternative is to always exclude non-existent directories from your
-cd history by setting the `--prune-always` as a [default
-option](#default-options).
 
 ## Alternative Command Name
 
