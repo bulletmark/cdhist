@@ -294,33 +294,7 @@ you want.
 
 ## Default Options
 
-There are 2 alternatives to set default cdhist options:
-
-1. Set options in startup configuration file.
-2. Set options in shell initialization code.
-
-It's largely personal preference which you choose.
-
-Note if you set `-r/--git-relative` or `-u/--no-user` options as default
-then options `-R/--no-git-relative` and `-U/--user` exist to
-allow you to temporarily override those defaults.
-
-### Set Options in Startup Configuration File
-
-You can add default options to a personal configuration file
-`~/.config/cdhist-flags.conf`. If that file exists then each line in
-the file will be concatenated and automatically prepended to your command
-line options. The following options are sensible candidates to set as
-default options: `--purge-always`, `--git-relative`, `--no-user`,
-`--size`. Comments on any line are excluded.
-
-You are best to use the full/long name for options and to add them on
-individual lines in the file so they are easy to read and easy to
-comment out temporarily etc.
-
-### Set Options in Shell Initialization Code
-
-Alternately, just set your preferred default options in your shell
+You can set default cdhist options by adding options in your shell
 initialization code, e.g:
 
 ```sh
@@ -329,15 +303,21 @@ if type cdhist &>/dev/null; then
 fi
 ```
 
-The above sets `-a (--purge-always)`, `-r (--git-relative)`, and
-`-m (--size) 200` options as defaults for your `cd` command. Best to use
-the short option names to keep the imported shell function definition
+The above sets `-a (--purge-always)`, `-r (--git-relative)`, and `-m
+(--size) 200` options as defaults for your `cd` command. Best to use the
+short option names to keep the imported shell function definition
 concise.
 
-An advantage of this 2nd approach to setting default options is that you
-can create one alias for your `cd` command, and another alias for your
-git worktree command (e.g. `wt`), and both can have different cdhist
-options.
+Note you can create one alias for your `cd` command, and another alias
+for your git worktree command (e.g. `wt`), and both can have different
+cdhist options.
+
+The following options are sensible candidates to set as default options:
+`-a/--purge-always`, `-r/--git-relative`, `-u/--no-user`, `-m/--size`.
+
+Note if you set `-r/--git-relative` or `-u/--no-user` options as default
+then options `-R/--no-git-relative` and `-U/--user` exist to allow you
+to temporarily override those defaults via the command line.
 
 ## Command Line Usage
 
@@ -376,8 +356,6 @@ options:
   -P, --follow-physical
                         follow links to physical directory
   -V, --version         just output cdhist version
-
-Note you can set default options in ~/.config/cdhist-flags.conf.
 ```
 
 ## Limitations
@@ -386,56 +364,6 @@ Regular `cd`, e.g. as provided by the bash builtin, offers some esoteric
 command line options such as `-e` and `-@`, and shell options such as
 `autocd`, `cdspell`, `cdable_vars`. These rarely used options are not
 supported by cdhist.
-
-## Major Version Change History
-
-Version 3.0 changes and new features:
-
-1. Added function to `cd` between [`git
-worktrees`](https://git-scm.com/docs/git-worktree). Can configure this
-as separate command if preferred, with option to display relative paths.
-
-2. Cleaner installation using `-i` option so no need for separate
-`cdhist.rc` file and can set arguments when installing to customise
-command name + options etc.
-
-3. Added `-L`/`-P` standard `cd` options.
-
-4. Added `-a/--purge-always` option to always prune history.
-
-5. Add `-n/--num-lines` to limit number of lines in output (for
-`-l/--list` and `--` commands).
-
-6. Added ability to set default options in
-`~/.config/cdhist-flags.conf`.
-
-7. Parses options/arguments using standard Python argparse.
-
-8. Let setuptools build the main program stub rather than install our
-own.
-
-9. Min Python version up from 3.4 to 3.7.
-
-10. Now installed as a Python package (directory) rather than a module
-(single file).
-
-11. Some of these changes slow the program down but architecture is
-changed so the program is run once only, not twice as it ran before.
-Second run was to save the new directory after `cd` had validated it,
-but now we validate it ourself before passing to `cd`. So net
-performance is quicker than previous version, at least for the vanilla
-case of changing directory. This is not noticeable on normal PC's but is
-on constrained platforms like Raspberry Pi 2/3 using SD card.
-
-12. If you were previously setting `CDHISTSIZE` or `CDHISTTILDE` settings
-via environment variables then you now need to set them using `--size`
-and `--no-user` in `~/.config/cdhist-flags.conf`, or add those options
-in your shell initialization code.
-
-13. The `-s` option to return a `cdhist.rc` file name for initialisation
-is still currently supported for backwards-compatibility but is
-undocumented and depreciated (a temporary file is created and returned).
-It will likely eventually be removed.
 
 ## License
 

@@ -3,10 +3,8 @@
 from __future__ import annotations
 
 import os
-import re
-import shlex
 import sys
-from argparse import SUPPRESS, ArgumentParser, Namespace
+from argparse import ArgumentParser, Namespace
 from pathlib import Path
 
 from . import utils
@@ -31,7 +29,6 @@ SHELLCODE = '''
 DEFCMD = 'cd'
 
 PROG = Path(sys.argv[0]).stem.replace('_', '-')
-CNFFILE = Path(os.getenv('XDG_CONFIG_HOME', '~/.config'), f'{PROG}-flags.conf')
 CDHISTFILE = utils.HOME / '.cd_history'
 
 def init_code(args: Namespace) -> str:
@@ -135,14 +132,11 @@ def main() -> str | int | None:
     #     quit.
 
     # Parse arguments
-    opt = ArgumentParser(description=__doc__, add_help=False,
-            epilog=f'Note you can set default options in {CNFFILE}.')
+    opt = ArgumentParser(description=__doc__, add_help=False)
     opt.add_argument('-i', '--init', action='store_true',
                      help='output shell initialization code. Optionally '
                      'specify alternative command name as argument, '
                      f'default="{DEFCMD}"')
-    opt.add_argument('-s', '--shell', action='store_true',
-                     help=SUPPRESS)
     opt.add_argument('-h', '--help', action='store_true',
                      help='show help/usage')
     opt.add_argument('-p', '--purge', action='store_true',
@@ -188,17 +182,7 @@ def main() -> str | int | None:
     else:
         search = None
 
-    # Merge in default args from user config file. Then parse the
-    # command line.
-    cnffile = CNFFILE.expanduser()
-    if cnffile.exists():
-        with cnffile.open() as fp:
-            lines = [re.sub(r'#.*$', '', line).strip() for line in fp]
-        cnflines = ' '.join(lines).strip()
-    else:
-        cnflines = ''
-
-    args = opt.parse_args(shlex.split(cnflines) + sys.argv[1:])
+    args = opt.parse_args()
 
     if args.help:
         return opt.format_help().strip()
@@ -218,18 +202,6 @@ def main() -> str | int | None:
     # Just output shell init code if asked
     if args.init:
         print(init_code(args))
-        return None
-
-    # This is temporary back-compatibility code until the previously
-    # provided but now depreciated -s/--shell option is removed. All
-    # users should migrate to the above args.init option.
-    if args.shell:
-        uid = os.getuid()
-        tmpdir = Path(f'/run/user/{uid}')
-        shfile = tmpdir.joinpath(f'{PROG}.rc') if tmpdir.is_dir() \
-                else Path(f'/tmp/{PROG}-{uid}.rc')
-        shfile.write_text(init_code(args) + '\n')
-        print(shfile)
         return None
 
     hist = fetch_cd_hist(args)
