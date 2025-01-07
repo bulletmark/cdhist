@@ -28,7 +28,7 @@ SHELLCODE = '''
 # using a command line option
 DEFCMD = 'cd'
 
-PROG = Path(sys.argv[0]).stem.replace('_', '-')
+PROG = Path(sys.argv[0]).stem
 CDHISTFILE = utils.HOME / '.cd_history'
 
 def init_code(args: Namespace) -> str:
