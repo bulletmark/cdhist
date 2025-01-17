@@ -90,18 +90,23 @@ AUR](https://aur.archlinux.org/packages/cdhist/) and skip to the next
 section.
 
 Python 3.8 or later is required. Note [cdhist is on
-PyPI](https://pypi.org/project/cdhist/) so just ensure that
-[`pipx`](https://pypa.github.io/pipx/) is installed then type the
-following:
+PyPI](https://pypi.org/project/cdhist/) so the easiest way to install it
+is to use [`uv tool`][uvtool] (or [`pipx`][pipx] or [`pipxu`][pipxu]).
 
-```
-$ pipx install cdhist
+```sh
+$ uv tool install cdhist
 ```
 
 To upgrade:
 
+```sh
+$ uv tool upgrade cdhist
 ```
-$ pipx upgrade cdhist
+
+To uninstall:
+
+```sh
+$ uv tool uninstall cdhist
 ```
 
 ## Setup
@@ -349,8 +354,8 @@ options:
   -u, --no-user         do not substitute "~" for home directory
   -U, --user            do substitute "~" for home directory (default)
   -l, --list            just list directory history
-  -m SIZE, --size SIZE  maximum size of directory history (default=50)
-  -n NUM_LINES, --num-lines NUM_LINES
+  -m, --size SIZE       maximum size of directory history (default=50)
+  -n, --num-lines NUM_LINES
                         limit output to specified number of lines
   -L, --follow-links    follow symbolic links (default=true)
   -P, --follow-physical
@@ -377,3 +382,7 @@ This program is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
 Public License at <http://www.gnu.org/licenses/> for more details.
+
+[pipx]: https://github.com/pypa/pipx
+[pipxu]: https://github.com/bulletmark/pipxu
+[uvtool]: https://docs.astral.sh/uv/guides/tools/#installing-tools
