@@ -3,7 +3,6 @@ PYNAME = $(subst -,_,$(NAME))
 
 check:
 	ruff check .
-	flake8 $(NAME)/*.py
 	mypy $(NAME)/*.py
 	pyright $(NAME)/*.py
 	vermin -vv --no-tips -i $(NAME)/*.py

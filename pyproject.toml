@@ -40,7 +40,6 @@ ignore_missing_imports = true
 [tool.edit-lint]
 linters = [
   "ruff",
-  "flake8",
   "mypy",
 ]
 
