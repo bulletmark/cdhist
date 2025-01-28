@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-'Shell wrapper to conveniently cd between git worktrees.'
+"Shell wrapper to conveniently cd between git worktrees."
+
 from __future__ import annotations
 
 import os
@@ -14,21 +15,26 @@ from . import utils
 
 HASH_LEN = 7
 
+
 @dataclass
 class Tree:
-    'Wrapper for individual worktree'
+    "Wrapper for individual worktree"
+
     path: Path
     path_u: Path
     head: str | None = None
     branch: str | None = None
     comment: str | None = None
 
+
 class Trees:
-    'Wrapper to manage the collection of worktrees'
+    "Wrapper to manage the collection of worktrees"
+
     def fetch(self, args: Namespace) -> bool:
-        'Run git and get list of worktrees'
-        res = subprocess.run('git worktree list --porcelain'.split(),
-                            stdout=subprocess.PIPE, text=True)
+        "Run git and get list of worktrees"
+        res = subprocess.run(
+            'git worktree list --porcelain'.split(), stdout=subprocess.PIPE, text=True
+        )
         if res.returncode != 0:
             return False
 
@@ -96,7 +102,7 @@ class Trees:
         return True
 
     def get_path_from_branch(self, text: str) -> Path | None:
-        'Return 1st branch (then hash) that starts with given text'
+        "Return 1st branch (then hash) that starts with given text"
         for t in self.trees:
             if t.branch and t.branch.startswith(text):
                 return t.path
@@ -108,7 +114,7 @@ class Trees:
         return None
 
     def build_output(self) -> list[str]:
-        'Present list of worktrees to user and prompt for selection'
+        "Present list of worktrees to user and prompt for selection"
         # List the worktrees
         pw = max(len(str(t.path_u)) for t in self.trees)
         lines = []
@@ -125,8 +131,9 @@ class Trees:
 
         return lines
 
+
 def parse_args(args: Namespace) -> Path | None:
-    'Parse command line for git worktree functionality'
+    "Parse command line for git worktree functionality"
     trees = Trees()
 
     if not trees.fetch(args):
@@ -149,8 +156,9 @@ def parse_args(args: Namespace) -> Path | None:
         if len(arg) > 1 and arg[0] == '/':
             path = utils.check_search(arg[1:], trees.paths)
         else:
-            path = utils.check_digit(arg, trees.paths) or \
-                    trees.get_path_from_branch(arg)
+            path = utils.check_digit(arg, trees.paths) or trees.get_path_from_branch(
+                arg
+            )
 
     if not path:
         sys.exit(f'fatal: no worktree for "{arg}".')

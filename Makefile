@@ -1,11 +1,11 @@
 NAME = $(shell basename $(CURDIR))
-PYNAME = $(subst -,_,$(NAME))
+PYFILES = $(wildcard $(NAME)/*.py)
 
 check:
-	ruff check .
-	mypy $(NAME)/*.py
-	pyright $(NAME)/*.py
-	vermin -vv --no-tips -i $(NAME)/*.py
+	ruff check $(PYFILES)
+	mypy $(PYFILES)
+	pyright $(PYFILES)
+	vermin -vv --no-tips -i $(PYFILES)
 
 build:
 	rm -rf dist
@@ -16,6 +16,9 @@ upload: build
 
 doc:
 	update-readme-usage
+
+format:
+	ruff check --select I --fix $(PYFILES) && ruff format $(PYFILES)
 
 clean:
 	@rm -vrf *.egg-info .venv/ build/ dist/ __pycache__ */__pycache__

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-'Misc utility functions for cdhist'
+"Misc utility functions for cdhist"
+
 from __future__ import annotations
 
 import sys
@@ -8,18 +9,19 @@ from pathlib import Path
 
 HOME = Path.home()
 
+
 def unexpanduser(path: str | Path) -> str:
-    'Return path name, with $HOME replaced by ~ (opposite of Path.expanduser())'
+    "Return path name, with $HOME replaced by ~ (opposite of Path.expanduser())"
     ppath = Path(path)
 
-    if ppath.parts[:len(HOME.parts)] != HOME.parts:
+    if ppath.parts[: len(HOME.parts)] != HOME.parts:
         return str(path)
 
-    return str(Path('~', *ppath.parts[len(HOME.parts):]))
+    return str(Path('~', *ppath.parts[len(HOME.parts) :]))
 
-def prompt(args: Namespace, dirlist: list[str], *,
-           reverse: bool = False) -> str | None:
-    'Present list of dirs to user and prompt for selection'
+
+def prompt(args: Namespace, dirlist: list[str], *, reverse: bool = False) -> str | None:
+    "Present list of dirs to user and prompt for selection"
     if not dirlist:
         sys.exit('fatal: no directories')
 
@@ -28,7 +30,7 @@ def prompt(args: Namespace, dirlist: list[str], *,
     num = args.num_lines
 
     if 0 <= num < len(dirlist):
-        dirlist = dirlist[:num] if reverse else dirlist[len(dirlist) - num:]
+        dirlist = dirlist[:num] if reverse else dirlist[len(dirlist) - num :]
     else:
         num = len(dirlist)
 
@@ -50,8 +52,9 @@ def prompt(args: Namespace, dirlist: list[str], *,
 
     return ans
 
+
 def check_digit(arg: str, dirlist: list[str], *, reverse: bool = False):
-    'Check if arg is number and then return indexed entry in dirlist'
+    "Check if arg is number and then return indexed entry in dirlist"
     if not arg.isdigit():
         return None
 
@@ -64,8 +67,9 @@ def check_digit(arg: str, dirlist: list[str], *, reverse: bool = False):
 
     return Path(dirlist[num])
 
+
 def check_search(arg: str, dirlist: list[Path]) -> Path | None:
-    'Search for arg in given dirlist'
+    "Search for arg in given dirlist"
     from itertools import count
 
     # Perform a somewhat heuristic search. Iterate through all dirs and
