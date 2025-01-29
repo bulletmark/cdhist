@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import subprocess
 import sys
 from argparse import Namespace
 from pathlib import Path
@@ -18,6 +19,17 @@ def unexpanduser(path: str | Path) -> str:
         return str(path)
 
     return str(Path('~', *ppath.parts[len(HOME.parts) :]))
+
+
+def fuzzy_prompt(args: Namespace, dirlist: list[str]) -> str | None:
+    res = subprocess.run(
+        args.fuzzy.split(), input='\n'.join(dirlist), stdout=subprocess.PIPE, text=True
+    )
+
+    if res.returncode != 0:
+        return None
+
+    return res.stdout.strip()
 
 
 def prompt(args: Namespace, dirlist: list[str], *, reverse: bool = False) -> str | None:

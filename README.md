@@ -1,20 +1,19 @@
-## Linux Directory History
+## CDHIST - Linux Directory History
 [![PyPi](https://img.shields.io/pypi/v/cdhist)](https://pypi.org/project/cdhist/)
 [![AUR](https://img.shields.io/aur/version/cdhist)](https://aur.archlinux.org/packages/cdhist/)
 
-[cdhist](http://github.com/bulletmark/cdhist) is a utility which
-provides a Linux shell **cd history** directory stack. A shell `cd`
-wrapper function calls cdhist to intercept your typed `cd` command and
-maintain an ordered stack of all directories you have previously visited
-which can be listed and quickly navigated to.
+[cdhist](http://github.com/bulletmark/cdhist) is a utility which provides a
+Linux shell **cd history** directory stack. A shell `cd` wrapper function calls
+cdhist to intercept your typed `cd` command and maintain an ordered stack of
+all directories you have previously visited which can be listed and quickly
+navigated to.
 
-[cdhist](http://github.com/bulletmark/cdhist) can also be used with the
-[Command Line Fuzzy Finder](https://github.com/junegunn/fzf) `fzf` to
-fuzzy search and select on previously visited directories, and can be
-used to easily `cd` between [`git worktree`](https://git-scm.com/docs/git-worktree)
-directories. See the sections below about [FZF
-Integration](#fzf-integration) and [Git Worktree
-Integration](#git-worktree-integration).
+[cdhist](http://github.com/bulletmark/cdhist) can also be used with a fuzzy
+finder (such as [`fzf`][fzf]) to fuzzy search and select on previously visited
+directories, and can be used to easily `cd` between [`git
+worktree`](https://git-scm.com/docs/git-worktree) directories. See the sections
+below about [Fuzzy Finder Integration](#fuzzy-finder-integration) and [Git
+Worktree Integration](#git-worktree-integration).
 
 The latest version and documentation is available at
 http://github.com/bulletmark/cdhist.
@@ -49,12 +48,18 @@ $ pwd
 /usr/share/doc
 ```
 
-That's it! The above is all you really need to know. Instead of having
-to type the directory name you merely enter it's index. The directories
-are displayed most recently visited last, without duplicates. Index 0 is
-the current directory, index 1 is the previous, index 2 is the second
-previous, up to a user configurable number (default 50). Other available
-commands and options are:
+That's it! The above is all you really need to know. Instead of having to type
+the directory name you merely enter it's index. The directories are displayed
+most recently visited last, without duplicates. Index 0 is the current
+directory, index 1 is the previous, index 2 is the second previous, up to a
+user configurable number (default 200).
+
+If you prefer a more modern approach you can use a fuzzy finder such as
+[`fzf`][fzf], or [`fzy`][fzy], or [`television`][television] to show and select
+from the list, instead of a simple index prompt. See the section on [Fuzzy
+Finder Integration](#fuzzy-finder-integration) below.
+
+Other available commands and options are:
 
 List the current stack and its indices (without prompting):
 
@@ -86,12 +91,11 @@ $ cd -h
 ## Installation
 
 Arch users can install [cdhist from the
-AUR](https://aur.archlinux.org/packages/cdhist/) and skip to the next
-section.
+AUR](https://aur.archlinux.org/packages/cdhist/) and skip to the next section.
 
 Python 3.8 or later is required. Note [cdhist is on
-PyPI](https://pypi.org/project/cdhist/) so the easiest way to install it
-is to use [`uv tool`][uvtool] (or [`pipx`][pipx] or [`pipxu`][pipxu]).
+PyPI](https://pypi.org/project/cdhist/) so the easiest way to install it is to
+use [`uv tool`][uvtool] (or [`pipx`][pipx] or [`pipxu`][pipxu]).
 
 ```sh
 $ uv tool install cdhist
@@ -111,96 +115,130 @@ $ uv tool uninstall cdhist
 
 ## Setup
 
-A user who wants to use the cdhist facility should add the following
-lines to their `~/.bashrc` or `~/.zshrc` file (after where your PATH is
-set up so that the command `cdhist` can be found). This creates the `cd`
+A user who wants to use the cdhist facility should add the following line to
+their `~/.bashrc` or `~/.zshrc` file. Ensure it is added after where your PATH
+is set up so that the command `cdhist` can be found. This creates the `cd`
 wrapper command in your interactive shell session as a tiny function.
-Note you can [customize the command name](#alternative-command-name) if
-you want.
 
 ```sh
-if type cdhist &>/dev/null; then
-    . <(cdhist -i)
-fi
+source <(cdhist -i)
 ```
 
-Then log out and back in again.
+Then log out and back in again to activate the new `cd` function. Note assuming
+a normal `.bashrc` environment, this will alias your `cd` command in your
+interactive terminal session only. The remapped `cd` will not be invoked by any
+programs or scripts you run, or for other users etc.
 
-## FZF Integration
+### Alternative Command Name
 
-The popular [Command Line Fuzzy Finder](https://github.com/junegunn/fzf)
-`fzf` can easily be integrated with cdhist to provide fuzzy search
-navigation over your directory history. Set the following in your
-environment to have `fzf` search the directories recorded by cdhist:
+Some people may prefer not to alias their real `cd` command to this utility and
+just use an alternative unique command name. To do this, simply add your
+desired command name as the first argument to the `cdhist -i` option in your
+shell initialization code. E.g, to use the command name `xd` rather than `cd`,
+use the following in your `~/.bashrc` or `~/.zshrc` file:
 
 ```sh
-export FZF_ALT_C_COMMAND="cat $HOME/.cd_history"
+source <(cdhist -i xd)
 ```
 
-You also should make a small change to the way you source the `fzf`
-key-bindings and completions into your shell to ensure that the `cd`
-command is not aliased to `builtin cd` and instead invokes the `cdhist`
-command.
+Then log out/in, and then use `xd /tmp` to change dir, `xd --` to see and
+select directories, etc.
 
-E.g. for `bash`, in your `~/.bashrc`, instead of `eval "$(fzf --bash)"`
-as suggested by the [`fzf` documentation](
-https://github.com/junegunn/fzf?tab=readme-ov-file#setting-up-shell-integration),
-use:
+### Default Options
+
+You can set default cdhist options by appending options in the shell
+initialization code, e.g:
 
 ```sh
-eval "$(fzf --bash | sed 's/builtin cd/cd/g')"
+source <(cdhist -i "cd -arm 100")
 ```
 
-E.g. for `zsh`, in your `~/.zshrc`, instead of `source <(fzf --zsh)`
-as suggested by the [`fzf` documentation](
-https://github.com/junegunn/fzf?tab=readme-ov-file#setting-up-shell-integration),
-use:
+The above sets `-a (--purge-always)`, '' `-r (--git-relative)`, and `-m
+(--size) 100` options as defaults for your `cd` command.
+
+Note you can use multiple source lines to define multiple commands. E.g. define
+one alias for your `cd` command, and another alias for your git worktree
+command (e.g. `wt`). Both can have different cdhist options.
+
+The following options are sensible candidates to set as default options:
+`-m/--size`, `-a/--purge-always`, `-g/--git`, `-r/--git-relative`,
+`-u/--no-user`, `-F/--fuzzy`, `-G/--no-fuzzy-git`.
+
+Note if you set `-r/--git-relative` or `-u/--no-user` options as default then
+options `-R/--no-git-relative` and `-U/--user` exist to allow you to
+temporarily override those defaults via the command line.
+
+### Fuzzy Finder Integration
+
+Any of the popular command line fuzzy search finders such as [`fzf`][fzf], or
+[`fzy`][fzy], or [`television`][television] can be used with `cdhist`.
+
+E.g. to use [`fzf`][fzf]:
 
 ```sh
-source <(fzf --zsh | sed 's/builtin cd/cd/g')
+source <(cdhist -i "cd -F fzf")
 ```
 
-After doing this (and reloading your shell session), you can use the
-`fzf` key binding `<ALT+C>` to have `fzf` list all your previous
-directories and fuzzy match on them for selection as you type. `fzf` can
-also provide fancy [directory
-previews](https://github.com/junegunn/fzf/wiki/Configuring-shell-key-bindings#preview-1)
-using `tree`, etc. Of course the cdhist native command `cd --` and
-other cdhist commands described above are still available, in addition
-to the `fzf` key binding.
-
-### Pruning Non-Existent Directories
-If you prefer that directories that do not exist are excluded from `fzf`
-and your `cd` history (i.e. exclude directories that have been deleted
-since they were last visited), then you can define the `fzf` command as:
+Or, to use [`television`][television]:
 
 ```sh
-export FZF_ALT_C_COMMAND="cdhist -p && cat $HOME/.cd_history"
+source <(cdhist -i "cd -F \"tv --no-preview\"")
 ```
 
-An alternative is to always exclude non-existent directories from your
-cd history by setting the `--prune-always` as a [default
-option](#default-options).
+Now when you type `cd --` you will be prompted with a list of directories via
+your fuzzy finder so you can search for a directory to select by fuzzy text
+matching.
 
-## Alternative Command Name
+In the following description, [`fzf`][fzf] will be used as it is by far the
+most popular fuzzy finder and the one used by the author. When you set up `fzf`
+[shell integration](https://junegunn.github.io/fzf/shell-integration/) then you
+can use the following terminal key bindings for `fzf`:
 
-Some people may prefer not to alias their system `cd` command to this
-utility and just use an alternative unique command name. To do this,
-simply add your desired command name as an extra argument to the
-`cdhist` command in your shell initialization code. E.g, to use the
-command name `xd` rather than `cd`, use the following in
-your `~/.bashrc` or `~/.zshrc` file:
+- `CTRL+t` to select files,
+- `CTRL+r` to select commands,
+- `ATL+c` to select directories.
+
+However, I never use the last `ATL+c` function because it lists directories
+only under the current directory whereas I am much more interested in listing
+all directories I have previously visited, i.e. those maintained by cdhist. So
+I disable that function in `fzf` by setting the `FZF_ALT_C_COMMAND` to an empty
+string before I source `fzf` in my `.bashrc` when [setting `fzf` up](https://junegunn.github.io/fzf/shell-integration/#setting-up-shell-integration).
+
+Then I set the following shell key binding in my `~/.inputrc` file (need to
+restart your shell to activate):
 
 ```sh
-if type cdhist &>/dev/null; then
-    . <(cdhist -i xd)
-fi
+"\ec": "cd --\n"
 ```
 
-Then log out/in, and then just type `xd /tmp` to change dir, `xd --` to see
-and select directories, etc.
+Now pressing `ALT+c` invokes cdhist to bring up the `fzf` list of my previously
+visited directories. Alternately, use `ALT+d` for cdhist and keep `ALT+c` for
+the default `fzf` search behavior.
 
-## GIT Worktree Integration
+You also have the choice of keeping the standard `cd --` command to work with
+simple index selection, and map a different cdhist command name to use with
+`ALT+c` only for the fuzzy finder. To do this, add the following 2 lines to your
+`~/.bashrc` or `~/.zshrc` file:
+
+```sh
+source <(cdhist -i)
+source <(cdhist -i "cdfuzzy -F fzf")
+```
+
+And then in your `~/.inputrc`:
+
+```
+"\ec": "cdfuzzy --\n"
+```
+
+Note all the above assumes you have the fuzzy finder somewhere in your PATH. If
+you don't then just specify the full path, e.g:
+
+```sh
+source <(cdhist -i "cd -F /path-to/fzf")
+```
+
+### GIT Worktree Integration
 
 [cdhist](http://github.com/bulletmark/cdhist) can be used to easily `cd`
 between [git worktree](https://git-scm.com/docs/git-worktree)
@@ -236,32 +274,34 @@ $ pwd
 $ cd -g main
 $ pwd
 /home/mark/src/myprog
-
 ```
 
-Instead of having to type the full git repository directory name you
-merely are prompted with a list and enter it's index. Or just directly
-enter the branch name (or commit hash). The directories are displayed in
-the same order as the output of the `git worktree list` command, except
-that the git directory corresponding to the current working directory is
-shown first (index 0) consistent with how the current directory is shown
-at index 0 for normal cd history and thus conveniently showing you which
-git worktree you are currently in which `git worktree list`
-unfortunately does not show.
+Instead of having to type the full git repository directory name you merely are
+prompted with a list and enter it's index. Or just directly enter the branch
+name (or commit hash). The directories are displayed in the same order as the
+output of the `git worktree list` command, except that the git directory
+corresponding to the current working directory is shown first (index 0)
+consistent with how the current directory is shown at index 0 for normal cd
+history and thus conveniently showing you which git worktree you are currently
+in which `git worktree list` unfortunately does not show.
 
-In you enter text instead of an index, you only need to enter as much of
-the branch name, or commit hash, as needed to be unique. Note that `cd
--g` nicely presents paths based from your HOME directory with a tilde
-(`~`) unlike the longer full path displayed by `git worktree list`
-(although you can change that with the `-u/--no-user` option, likely set
-as a [default option](#default-options)).
+In you enter text instead of an index, you only need to enter as much of the
+branch name, or commit hash, as needed to be unique. Note that `cd -g` nicely
+presents paths based from your HOME directory with a tilde (`~`) unlike the
+longer full path displayed by `git worktree list` (although you can disable
+that with the `-u/--no-user` option, likely set as a [default
+option](#default-options)).
 
-### Relative Git Worktree Directories
+Note if you have `-F/--fuzzy` enabled but you don't want to also use that for
+git worktree selection then you can disable it with the `-G/--no-fuzzy-git`
+option.
 
-The `git worktree list` command displays absolute directory paths, and
-cdhist does also by default, but many users prefer them displayed
-as relative paths. The Git worktree command does not provide this but
-you can enable it in cdhist by adding the `-r/--relative` option, e.g:
+#### Relative Git Worktree Directories
+
+The `git worktree list` command displays absolute directory paths, and cdhist
+does also by default, but many users prefer them displayed as shorter relative
+paths. The Git worktree command does not provide this but you can enable it in
+cdhist by adding the `-r/--git-relative` option, e.g:
 
 ```sh
 $ cd -gr
@@ -272,65 +312,34 @@ $ cd -gr
 Select index [or <enter> to quit]:
 ```
 
-Most likely you will want to set this as your default so do that by
-adding `--relative` as a [default option](#default-options).
+Most likely you will want to set this as your default so do that by adding
+`-r/--git-relative` as a [default option](#default-options).
 
-### Git Worktree Functionality Alone
+#### Git Worktree Functionality Alone
 
-Some users may want the git worktree functionality provided by cdhist
-but are not interested in the standard `cd` history functionality, or
-alternately, want to use a completely separate command for the git
-worktree functionality. To do this, simply add your desired command name
-and the git option as an extra argument to the `cdhist` command in your
-shell initialization code. E.g, to use the command name `wt` for git
-worktree functionality (only), add the following in your
-`~/.bashrc` or `~/.zshrc` file:
-
-```sh
-if type cdhist &>/dev/null; then
-    . <(cdhist -i "wt -g")
-fi
-```
-
-Then log out/in, and then just type `wt` to list the git worktrees and
-be prompted to select the directory etc. Of course, you can define this
-`wt` command in parallel to using cdhist for your `cd` command if
-you want.
-
-## Default Options
-
-You can set default cdhist options by adding options in your shell
-initialization code, e.g:
+Some users may want the git worktree functionality provided by cdhist but are
+not interested in the standard `cd` history functionality, or alternately, want
+to use a completely separate command for the git worktree functionality. To do
+this, simply add your desired command name and the git option the first
+argument to the `cdhist` command in your shell initialization code. E.g, to use
+the command name `wt` for git worktree functionality (only), add the following
+in your `~/.bashrc` or `~/.zshrc` file:
 
 ```sh
-if type cdhist &>/dev/null; then
-    . <(cdhist -i "cd -arm 200")
-fi
+source <(cdhist -i "wt -g")
 ```
 
-The above sets `-a (--purge-always)`, `-r (--git-relative)`, and `-m
-(--size) 200` options as defaults for your `cd` command. Best to use the
-short option names to keep the imported shell function definition
-concise.
-
-Note you can create one alias for your `cd` command, and another alias
-for your git worktree command (e.g. `wt`), and both can have different
-cdhist options.
-
-The following options are sensible candidates to set as default options:
-`-a/--purge-always`, `-r/--git-relative`, `-u/--no-user`, `-m/--size`.
-
-Note if you set `-r/--git-relative` or `-u/--no-user` options as default
-then options `-R/--no-git-relative` and `-U/--user` exist to allow you
-to temporarily override those defaults via the command line.
+Then log out/in. Type `wt` to list the git worktrees and be prompted to select
+the directory etc. Of course, you can define this `wt` command in parallel to
+using cdhist for your `cd` command if you want.
 
 ## Command Line Usage
 
 Type `cdhist -h` to view the usage summary:
 
 ```
-usage: cdhist [-i] [-h] [-p] [-a] [-g] [-r] [-R] [-u] [-U] [-l] [-m SIZE]
-                   [-n NUM_LINES] [-L] [-P] [-V]
+usage: cdhist [-h] [-i] [-l] [-m SIZE] [-n NUM_LINES] [-p] [-a] [-g] [-r]
+                   [-R] [-u] [-U] [-F FUZZY] [-G] [-L] [-P] [-V]
                    [directory]
 
 A Linux shell directory stack "cd history" function.
@@ -342,9 +351,13 @@ positional arguments:
                         dir
 
 options:
+  -h, --help            show help/usage
   -i, --init            output shell initialization code. Optionally specify
                         alternative command name as argument, default="cd"
-  -h, --help            show help/usage
+  -l, --list            just list directory history
+  -m, --size SIZE       maximum size of directory history (default=200)
+  -n, --num-lines NUM_LINES
+                        limit output to specified number of lines
   -p, --purge           just purge non-existent directories from history
   -a, --purge-always    always purge non-existent directories every write
   -g, --git             show git worktree directories instead
@@ -353,10 +366,9 @@ options:
                         do not show relative git worktree paths (default)
   -u, --no-user         do not substitute "~" for home directory
   -U, --user            do substitute "~" for home directory (default)
-  -l, --list            just list directory history
-  -m, --size SIZE       maximum size of directory history (default=50)
-  -n, --num-lines NUM_LINES
-                        limit output to specified number of lines
+  -F, --fuzzy FUZZY     use specified fuzzy finder program to select directory
+                        from list
+  -G, --no-fuzzy-git    do not use fuzzy finder for git worktree selection
   -L, --follow-links    follow symbolic links (default=true)
   -P, --follow-physical
                         follow links to physical directory
@@ -366,9 +378,9 @@ options:
 ## Limitations
 
 Regular `cd`, e.g. as provided by the bash builtin, offers some esoteric
-command line options such as `-e` and `-@`, and shell options such as
-`autocd`, `cdspell`, `cdable_vars`. These rarely used options are not
-supported by cdhist.
+command line options such as `-e` and `-@`, and shell options such as `autocd`,
+`cdspell`, `cdable_vars`. These rarely used options are not supported by
+cdhist.
 
 ## License
 
@@ -386,3 +398,6 @@ Public License at <http://www.gnu.org/licenses/> for more details.
 [pipx]: https://github.com/pypa/pipx
 [pipxu]: https://github.com/bulletmark/pipxu
 [uvtool]: https://docs.astral.sh/uv/guides/tools/#installing-tools
+[fzf]: https://github.com/junegunn/fzf
+[fzy]: https://github.com/jhawthorn/fzy
+[television]: https://github.com/alexpasmantier/television

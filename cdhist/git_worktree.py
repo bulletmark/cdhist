@@ -149,16 +149,23 @@ def parse_args(args: Namespace) -> Path | None:
     elif args.search:
         path = utils.check_search(args.search, trees.paths)
     else:
-        arg = utils.prompt(args, trees.build_output())
-        if not arg:
-            return None
+        paths = trees.build_output()
+        if args.fuzzy and not args.no_fuzzy_git and not args.list:
+            paths.reverse()
+            if not (arg := utils.fuzzy_prompt(args, paths)):
+                return None
 
-        if len(arg) > 1 and arg[0] == '/':
-            path = utils.check_search(arg[1:], trees.paths)
+            path = Path(trees.paths[len(trees.paths) - paths.index(arg) - 1])
         else:
-            path = utils.check_digit(arg, trees.paths) or trees.get_path_from_branch(
-                arg
-            )
+            if not (arg := utils.prompt(args, paths)):
+                return None
+
+            if len(arg) > 1 and arg[0] == '/':
+                path = utils.check_search(arg[1:], trees.paths)
+            else:
+                path = utils.check_digit(
+                    arg, trees.paths
+                ) or trees.get_path_from_branch(arg)
 
     if not path:
         sys.exit(f'fatal: no worktree for "{arg}".')

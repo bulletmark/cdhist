@@ -99,13 +99,23 @@ def parse_args_cd(args: Namespace, hist: list[str]) -> Path | None:
     "Parse arguments for the cd command"
     if args.list or sys.argv[-1] == '--':
         hist_u = hist if args.no_user else [utils.unexpanduser(d) for d in hist]
-        arg = utils.prompt(args, hist_u, reverse=True)
-        if not arg:
-            return None
+        if args.fuzzy:
+            # We don't car about maintaining $PWD as index 0 and $OLDPWD as index 1 in
+            # fuzzy mode so can remove one if they are duplicates
+            if hist[0] == hist[1]:
+                hist_u = hist_u[1:]
 
-        path = utils.check_digit(arg, hist, reverse=True) or utils.check_search(
-            arg.lstrip('/'), [Path(d) for d in hist]
-        )
+            if not (arg := utils.fuzzy_prompt(args, hist_u)):
+                return None
+
+            path = Path(arg).expanduser()
+        else:
+            if not (arg := utils.prompt(args, hist_u, reverse=True)):
+                return None
+
+            path = utils.check_digit(arg, hist, reverse=True) or utils.check_search(
+                arg.lstrip('/'), [Path(d) for d in hist]
+            )
 
     elif args.directory:
         path = None
@@ -139,6 +149,7 @@ def main() -> str | int | None:
 
     # Parse arguments
     opt = ArgumentParser(description=__doc__, add_help=False)
+    opt.add_argument('-h', '--help', action='store_true', help='show help/usage')
     opt.add_argument(
         '-i',
         '--init',
@@ -147,7 +158,23 @@ def main() -> str | int | None:
         'specify alternative command name as argument, '
         f'default="{DEFCMD}"',
     )
-    opt.add_argument('-h', '--help', action='store_true', help='show help/usage')
+    opt.add_argument(
+        '-l', '--list', action='store_true', help='just list directory history'
+    )
+    opt.add_argument(
+        '-m',
+        '--size',
+        type=int,
+        default=200,
+        help='maximum size of directory history (default=%(default)s)',
+    )
+    opt.add_argument(
+        '-n',
+        '--num-lines',
+        type=int,
+        default=-1,
+        help='limit output to specified number of lines',
+    )
     opt.add_argument(
         '-p',
         '--purge',
@@ -190,21 +217,15 @@ def main() -> str | int | None:
         help='do substitute "~" for home directory (default)',
     )
     opt.add_argument(
-        '-l', '--list', action='store_true', help='just list directory history'
+        '-F',
+        '--fuzzy',
+        help='use specified fuzzy finder program to select directory from list',
     )
     opt.add_argument(
-        '-m',
-        '--size',
-        type=int,
-        default=50,
-        help='maximum size of directory history (default=%(default)s)',
-    )
-    opt.add_argument(
-        '-n',
-        '--num-lines',
-        type=int,
-        default=-1,
-        help='limit output to specified number of lines',
+        '-G',
+        '--no-fuzzy-git',
+        action='store_true',
+        help='do not use fuzzy finder for git worktree selection',
     )
     opt.add_argument(
         '-L',
