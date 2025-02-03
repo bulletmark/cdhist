@@ -55,9 +55,9 @@ directory, index 1 is the previous, index 2 is the second previous, up to a
 user configurable number (default 200).
 
 If you prefer a more modern approach you can use a fuzzy finder such as
-[`fzf`][fzf], or [`fzy`][fzy], or [`television`][television] to show and select
-from the list, instead of a simple index prompt. See the section on [Fuzzy
-Finder Integration](#fuzzy-finder-integration) below.
+[`fzf`][fzf], [`sk`][skim], [`tv`][television], or [`fzy`][fzy]
+to show and select from the list, instead of a simple index prompt. See the
+section on [Fuzzy Finder Integration](#fuzzy-finder-integration) below.
 
 Other available commands and options are:
 
@@ -170,8 +170,9 @@ temporarily override those defaults via the command line.
 
 ### Fuzzy Finder Integration
 
-Any of the popular command line fuzzy search finders such as [`fzf`][fzf], or
-[`fzy`][fzy], or [`television`][television] can be used with `cdhist`.
+Any of the popular command line fuzzy search finders such as
+[`fzf`][fzf], [`sk`][skim], [`tv`][television], or [`fzy`][fzy]
+can be used with `cdhist`.
 
 E.g. to use [`fzf`][fzf]:
 
@@ -400,4 +401,5 @@ Public License at <http://www.gnu.org/licenses/> for more details.
 [uvtool]: https://docs.astral.sh/uv/guides/tools/#installing-tools
 [fzf]: https://github.com/junegunn/fzf
 [fzy]: https://github.com/jhawthorn/fzy
+[skim]: https://github.com/skim-rs/skim
 [television]: https://github.com/alexpasmantier/television
