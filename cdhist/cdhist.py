@@ -99,7 +99,7 @@ def parse_args_cd(args: Namespace, hist: list[str]) -> Path | None:
     "Parse arguments for the cd command"
     if args.list or sys.argv[-1] == '--':
         hist_u = hist if args.no_user else [utils.unexpanduser(d) for d in hist]
-        if args.fuzzy:
+        if args.fuzzy and not args.list:
             # We don't car about maintaining $PWD as index 0 and $OLDPWD as index 1 in
             # fuzzy mode so can remove one if they are duplicates
             if hist[0] == hist[1]:
