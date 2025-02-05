@@ -73,8 +73,8 @@ Change immediately to directory corresponding to stack index 4:
 $ cd -4
 ```
 
-Search back through stack for directory containing "string" and `cd`
-there:
+Search back through stack for directory containing "string" in it's name and
+`cd` there:
 
 ```sh
 $ cd -/string
