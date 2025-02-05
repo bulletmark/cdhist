@@ -80,7 +80,9 @@ there:
 $ cd -/string
 ```
 
-Note, you can also type `string` at the `cd --` prompt to search.
+Note, you can also type the text `string` at the `cd --` prompt to search, although for
+frequent searching it is probably better to use an [integrated fuzzy
+finder](#fuzzy-finder-integration).
 
 Show help/usage:
 
