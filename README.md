@@ -208,7 +208,7 @@ I disable that function in `fzf` by setting the `FZF_ALT_C_COMMAND` to an empty
 string before I source `fzf` in my `.bashrc` when [setting `fzf` up](https://junegunn.github.io/fzf/shell-integration/#setting-up-shell-integration).
 
 Then I set the following shell key binding in my `~/.inputrc` file (need to
-restart your shell to activate):
+restart your login shell/terminal to activate):
 
 ```sh
 "\ec": "cd --\n"
