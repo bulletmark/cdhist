@@ -241,6 +241,11 @@ you don't then just specify the full path, e.g:
 source <(cdhist -i "cd -F /path-to/fzf")
 ```
 
+### Yazi Integration
+
+[`cdhist.yazi`][cdhist.yazi] is a [Yazi][yazi] plugin that provides cdhist
+functionality within the [Yazi][yazi] terminal file manager.
+
 ### GIT Worktree Integration
 
 [cdhist](http://github.com/bulletmark/cdhist) can be used to easily `cd`
@@ -405,3 +410,5 @@ Public License at <http://www.gnu.org/licenses/> for more details.
 [fzy]: https://github.com/jhawthorn/fzy
 [skim]: https://github.com/skim-rs/skim
 [television]: https://github.com/alexpasmantier/television
+[cdhist.yazi]: https://github.com/bulletmark/cdhist.yazi
+[yazi]: https://yazi-rs.github.io/
