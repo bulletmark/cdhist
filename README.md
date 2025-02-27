@@ -182,15 +182,22 @@ E.g. to use [`fzf`][fzf]:
 source <(cdhist -i "cd -F fzf")
 ```
 
-Or, to use [`television`][television]:
+Or, to use [`television`][television] with [`exa`][exa] to show a preview of
+directory contents:
 
 ```sh
-source <(cdhist -i "cd -F \"tv --no-preview\"")
+source <(cdhist -i "cd -uF \"tv --preview 'exa --color=always -l {}'\"")
 ```
 
 Now when you type `cd --` you will be prompted with a list of directories via
 your fuzzy finder so you can search for a directory to select by fuzzy text
 matching.
+
+Note if you use [`television`][television] then it is suggested to set the
+`television` option `input_bar_position = bottom` in the `ui` section of your
+[`~/.config/television/config.toml`](https://github.com/alexpasmantier/television/blob/main/.config/config.toml)
+file so that the input bar is at the bottom of the screen and close where your
+terminal prompt usually is.
 
 In the following description, [`fzf`][fzf] will be used as it is by far the
 most popular fuzzy finder and the one used by the author. When you set up `fzf`
@@ -412,3 +419,4 @@ Public License at <http://www.gnu.org/licenses/> for more details.
 [television]: https://github.com/alexpasmantier/television
 [cdhist.yazi]: https://github.com/bulletmark/cdhist.yazi
 [yazi]: https://yazi-rs.github.io/
+[exa]: https://github.com/ogham/exa
