@@ -73,6 +73,9 @@ Change immediately to directory corresponding to stack index 4:
 $ cd -4
 ```
 
+Note that `cd -1` is equivalent to the native `cd -` for the previous
+directory, `cd -2` is the directory before that, etc.
+
 Search back through stack for directory containing "string" in it's name and
 `cd` there:
 
