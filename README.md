@@ -186,7 +186,7 @@ Or, to use [`television`][television] with [`exa`][exa] to show a preview of
 directory contents:
 
 ```sh
-source <(cdhist -i "cd -uF \"tv --preview 'exa --color=always -l {}'\"")
+source <(cdhist -i "cd -uF \"tv --preview 'exa --color=always -l@F=always {}'\"")
 ```
 
 Now when you type `cd --` you will be prompted with a list of directories via
