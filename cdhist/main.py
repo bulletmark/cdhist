@@ -29,7 +29,7 @@ SHELLCODE = """
 # using a command line option
 DEFCMD = 'cd'
 
-PROG = Path(sys.argv[0]).stem
+PROG = Path(__file__).parent.stem
 CDHISTFILE = utils.HOME / '.cd_history'
 
 

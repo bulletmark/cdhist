@@ -1,6 +1,6 @@
 from sys import exit
 
-from . import cdhist
+from . import main
 
 if __name__ == '__main__':
-    exit(cdhist.main())
+    exit(main.main())

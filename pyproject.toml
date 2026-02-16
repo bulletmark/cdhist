@@ -22,7 +22,7 @@ email = "mark.blakeney@bullet-systems.net"
 Homepage = "https://github.com/bulletmark/cdhist"
 
 [project.scripts]
-cdhist = "cdhist.cdhist:main"
+cdhist = "cdhist.main:main"
 
 [tool.setuptools_scm]
 version_scheme = "post-release"
