@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import os
 import sys
-from argparse import ArgumentParser, Namespace
+from argparse import SUPPRESS, ArgumentParser, Namespace
 from pathlib import Path
 
 from . import utils
@@ -14,10 +14,13 @@ from . import utils
 SHELLCODE = """
 !cmd() {
     local d
-    d=$(!prog "$@")
+    d=$(!prog -_ "$@")
     local r=$?
 
     if [ $r -ne 0 ]; then
+        if [ $r -eq 2 ]; then
+            return 0
+        fi
         return $r
     fi
 
@@ -139,17 +142,19 @@ def parse_args_cd(args: Namespace, hist: list[str]) -> Path | None:
     return path
 
 
-def main() -> str | int | None:
+def main() -> str | int:
     "Main code"
     # Main returns a status code:
     # 0 = Directory written to stdout. Calling script should cd to that
     #     worktree directory.
     # 1 = Error/message written to stderr (etc). Caller should just
     #     quit.
+    # 2 = Caller should just quit.
 
     # Parse arguments
     opt = ArgumentParser(description=__doc__, add_help=False)
     opt.add_argument('-h', '--help', action='store_true', help='show help/usage')
+    opt.add_argument('-_', action='store_true', help=SUPPRESS)
     opt.add_argument(
         '-i',
         '--init',
@@ -274,19 +279,25 @@ def main() -> str | int | None:
         except Exception:
             version = '?'
 
+        if args._:
+            return f'Must invoke using "{PROG}" to output version.'
+
         print(version)
-        return None
+        return 0
 
     # Just output shell init code if asked
     if args.init:
+        if args._:
+            return f'Must invoke using "{PROG}" to output shell initialization code.'
+
         print(init_code(args))
-        return None
+        return 0
 
     hist = fetch_cd_hist(args)
 
     if args.purge:
         write_cd_hist(hist, args.size, True)
-        return None
+        return 2 if args._ else 0
 
     args.search = search
 
@@ -320,7 +331,7 @@ def main() -> str | int | None:
     newhist = [pathstr] + [p for p in hist if p != pathstr]
     write_cd_hist(newhist, args.size, args.purge_always)
     print(pathstr)
-    return None
+    return 0
 
 
 if __name__ == '__main__':
