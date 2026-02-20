@@ -3,11 +3,11 @@
 
 from __future__ import annotations
 
+import shlex
 import subprocess
 import sys
 from argparse import Namespace
 from pathlib import Path
-import shlex
 
 HOME = Path.home()
 
@@ -24,7 +24,10 @@ def unexpanduser(path: str | Path) -> str:
 
 def fuzzy_prompt(args: Namespace, dirlist: list[str]) -> str | None:
     res = subprocess.run(
-        shlex.split(args.fuzzy), input='\n'.join(dirlist), stdout=subprocess.PIPE, text=True
+        shlex.split(args.fuzzy),
+        input='\n'.join(dirlist),
+        stdout=subprocess.PIPE,
+        text=True,
     )
 
     if res.returncode != 0:
