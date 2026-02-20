@@ -41,30 +41,29 @@ def prompt(args: Namespace, dirlist: list[str], *, reverse: bool = False) -> str
     if not dirlist:
         sys.exit('fatal: no directories')
 
-    tty = open('/dev/tty', 'w')
+    with open('/dev/tty', 'w') as tty:
+        num = args.num_lines
 
-    num = args.num_lines
+        if 0 <= num < len(dirlist):
+            dirlist = dirlist[:num] if reverse else dirlist[len(dirlist) - num :]
+        else:
+            num = len(dirlist)
 
-    if 0 <= num < len(dirlist):
-        dirlist = dirlist[:num] if reverse else dirlist[len(dirlist) - num :]
-    else:
-        num = len(dirlist)
+        # List the worktrees
+        for x, line in enumerate(reversed(dirlist) if reverse else dirlist, 1):
+            n = num - x
+            tty.write(f'{n:3} {line}\n')
 
-    # List the worktrees
-    for x, line in enumerate(reversed(dirlist) if reverse else dirlist, 1):
-        n = num - x
-        tty.write(f'{n:3} {line}\n')
+        if args.list:
+            return None
 
-    if args.list:
-        return None
-
-    # Prompt for index
-    tty.write('Select index [or <enter> to quit]: ')
-    tty.flush()
-    try:
-        ans = sys.stdin.readline().strip()
-    except KeyboardInterrupt:
-        return None
+        # Prompt for index
+        tty.write('Select index [or <enter> to quit]: ')
+        tty.flush()
+        try:
+            ans = sys.stdin.readline().strip()
+        except KeyboardInterrupt:
+            return None
 
     return ans
 
