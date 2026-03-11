@@ -185,27 +185,20 @@ E.g. to use [`fzf`][fzf]:
 source <(cdhist -i "cd -F fzf")
 ```
 
-Or, to use [`television`][television] with [`eza`][eza] to show a preview of
-directory contents:
-
-```sh
-source <(cdhist -i "cd -uF \"tv --preview-command 'eza --color=always -l@F=always {}'\"")
-```
-
 Now when you type `cd --` you will be prompted with a list of directories via
 your fuzzy finder so you can search for a directory to select by fuzzy text
 matching.
 
-Note if you use [`television`][television] then it is suggested to set the
-`television` option `input_bar_position = bottom` in the `ui` section of your
-[`~/.config/television/config.toml`](https://github.com/alexpasmantier/television/blob/main/.config/config.toml)
-file so that the input bar is at the bottom of the screen and close where your
-terminal prompt usually is.
+Or, to use [`fzf`][fzf] with preview of directory contents using [`eza`][eza]:
 
-In the following description, [`fzf`][fzf] will be used as it is by far the
-most popular fuzzy finder and the one used by the author. When you set up `fzf`
-[shell integration](https://junegunn.github.io/fzf/shell-integration/) then you
-can use the following terminal key bindings for `fzf`:
+```sh
+source <(cdhist -i "cd -uF \"fzf --preview 'eza --color=always -lF {}'\"")
+```
+
+Note that [`fzf`][fzf] will be used in the following description as it is by far
+the most popular fuzzy finder and the one used by the author. When you set up
+`fzf` [shell integration](https://junegunn.github.io/fzf/shell-integration/)
+then you can use the following terminal key bindings for `fzf`:
 
 - `CTRL+t` to select files,
 - `CTRL+r` to select commands,
