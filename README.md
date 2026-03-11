@@ -185,11 +185,11 @@ E.g. to use [`fzf`][fzf]:
 source <(cdhist -i "cd -F fzf")
 ```
 
-Or, to use [`television`][television] with [`exa`][exa] to show a preview of
+Or, to use [`television`][television] with [`eza`][eza] to show a preview of
 directory contents:
 
 ```sh
-source <(cdhist -i "cd -uF \"tv --preview-command 'exa --color=always -l@F=always {}'\"")
+source <(cdhist -i "cd -uF \"tv --preview-command 'eza --color=always -l@F=always {}'\"")
 ```
 
 Now when you type `cd --` you will be prompted with a list of directories via
@@ -422,4 +422,4 @@ Public License at <https://en.wikipedia.org/wiki/GNU_General_Public_License> for
 [television]: https://github.com/alexpasmantier/television
 [cdhist.yazi]: https://github.com/bulletmark/cdhist.yazi
 [yazi]: https://yazi-rs.github.io/
-[exa]: https://github.com/ogham/exa
+[eza]: https://github.com/eza-community/eza
