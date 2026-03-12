@@ -192,7 +192,7 @@ matching.
 Or, to use [`fzf`][fzf] with preview of directory contents using [`eza`][eza]:
 
 ```sh
-source <(cdhist -i "cd -uF \"fzf --preview 'eza --color=always -lF {}'\"")
+source <(cdhist -i "cd -uF \"fzf --preview 'eza --color=always -lF {} 2>/dev/null'\"")
 ```
 
 Note that [`fzf`][fzf] will be used in the following description as it is by far
