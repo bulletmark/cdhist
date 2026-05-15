@@ -36,6 +36,40 @@ PROG = Path(__file__).parent.stem
 CDHISTFILE = utils.HOME / '.cd_history'
 
 
+class Xargs:
+    """
+    Class to process the special case of the last argument being a cd history
+    selector: "cd -", "cd --", "cd -/string", or "cd -n". We process this and
+    remove it before passing the remaining regular arguments to argparse.
+    """
+
+    def __init__(self) -> None:
+        self.previous = False
+        self.prompt = False
+        self.search = ''
+        self.number = ''
+
+        if len(argv := sys.argv) < 2:
+            return
+
+        last_arg = argv[-1]
+
+        if last_arg[0] != '-':
+            return
+        elif len(last_arg) == 1:
+            self.previous = True
+        elif (rest := last_arg[1:]) == '-':
+            self.prompt = True
+        elif rest[0] == '/':
+            self.search = rest[1:]
+        elif rest.isdigit():
+            self.number = rest
+        else:
+            return
+
+        del argv[-1]
+
+
 def init_code(args: Namespace) -> str:
     "Return shell init code as string"
     from string import Template
@@ -100,7 +134,16 @@ def fetch_cd_hist(args: Namespace) -> list[str]:
 
 def parse_args_cd(args: Namespace, hist: list[str]) -> Path | None:
     "Parse arguments for the cd command"
-    if args.list or sys.argv[-1] == '--':
+    if args.xargs.previous:
+        # A normal shell can't cd to OLDPWD when it is not set (e.g.
+        # just after login). But we have non-volatile history so
+        # may as well use it :)
+        path = Path(hist[1]) if len(hist) > 1 else Path('-')
+    elif arg := args.xargs.number:
+        path = utils.check_digit(arg, hist, reverse=True)
+    elif arg := args.xargs.search:
+        path = utils.check_search(arg, [Path(d) for d in hist])
+    elif args.list or args.xargs.prompt:
         hist_u = hist if args.no_user else [utils.unexpanduser(d) for d in hist]
         if args.fuzzy and not args.list:
             # We don't car about maintaining $PWD as index 0 and $OLDPWD as index 1 in
@@ -119,23 +162,8 @@ def parse_args_cd(args: Namespace, hist: list[str]) -> Path | None:
             path = utils.check_digit(arg, hist, reverse=True) or utils.check_search(
                 arg.lstrip('/'), [Path(d) for d in hist]
             )
-
-    elif args.directory:
-        path = None
-        pathstr = args.directory
-        if pathstr[0] == '-':
-            if len(pathstr) == 1 and len(hist) > 1:
-                # A normal shell can't cd to OLDPWD when it is not set (e.g.
-                # just after login). But we have non-volatile history so
-                # may as well use it :)
-                path = Path(hist[1])
-            else:
-                path = utils.check_digit(pathstr[1:], hist, reverse=True)
-
-        if not path:
-            path = Path(pathstr)
-    elif args.search:
-        path = utils.check_search(args.search, [Path(d) for d in hist])
+    elif arg := args.directory:
+        path = Path(arg)
     else:
         path = utils.HOME
 
@@ -258,13 +286,10 @@ def main() -> str | int:
         'or "-/<string>" to match for "string" in dir',
     )
 
-    # Argparse will not allow "-/search" so we fudge it before arg parsing
-    if sys.argv[-1].startswith('-/'):
-        search = sys.argv[-1][2:]
-        del sys.argv[-1]
-    else:
-        search = None
+    # Preprocess and potentially remove the last argument
+    xargs = Xargs()
 
+    # Parse the rest of the arguments
     args = opt.parse_args()
 
     if args.help:
@@ -299,7 +324,7 @@ def main() -> str | int:
         write_cd_hist(hist, args.size, True)
         return 2 if args._ else 0
 
-    args.search = search
+    args.xargs = xargs
 
     if args.git:
         from . import git_worktree

@@ -38,7 +38,7 @@ class Trees:
         if res.returncode != 0:
             return False
 
-        trees: deque = deque()
+        trees = deque()
         tree = None
         cwd = Path.cwd()
         cwd_parents = list(cwd.parents)
@@ -139,16 +139,15 @@ def parse_args(args: Namespace) -> Path | None:
     if not trees.fetch(args):
         return None
 
-    arg = args.directory
-    if arg and not args.list:
-        if arg[0] == '-':
-            path = utils.check_digit(arg[1:] or '1', trees.paths)
-        else:
-            path = trees.get_path_from_branch(arg)
+    dir = args.directory
 
-    elif args.search:
-        path = utils.check_search(args.search, trees.paths)
-    else:
+    if args.xargs.previous:
+        path = trees.paths[0] if trees.paths else None
+    elif arg := args.xargs.number:
+        path = utils.check_digit(arg, trees.paths)
+    elif arg := args.xargs.search:
+        path = utils.check_search(arg, trees.paths)
+    elif not dir or args.list or args.xargs.prompt:
         paths = trees.build_output()
         if args.fuzzy and not args.no_fuzzy_git and not args.list:
             paths.reverse()
@@ -156,18 +155,20 @@ def parse_args(args: Namespace) -> Path | None:
                 return None
 
             path = Path(trees.paths[len(trees.paths) - paths.index(arg) - 1])
+        elif arg := utils.prompt(args, paths):
+            path = utils.check_digit(arg, trees.paths) or trees.get_path_from_branch(
+                arg
+            )
         else:
-            if not (arg := utils.prompt(args, paths)):
-                return None
+            return None
 
-            if len(arg) > 1 and arg[0] == '/':
-                path = utils.check_search(arg[1:], trees.paths)
-            else:
-                path = utils.check_digit(
-                    arg, trees.paths
-                ) or trees.get_path_from_branch(arg)
+    else:
+        path = trees.get_path_from_branch(dir)
 
     if not path:
-        sys.exit(f'fatal: no worktree for "{arg}".')
+        if dir:
+            sys.exit(f'fatal: no worktree for "{dir}".')
+        else:
+            sys.exit('fatal: no worktree.')
 
     return path

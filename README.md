@@ -349,9 +349,10 @@ using cdhist for your `cd` command if you want.
 Type `cdhist -h` to view the usage summary:
 
 ```
-usage: cdhist [-h] [-i] [-l] [-m SIZE] [-n NUM_LINES] [-p] [-a] [-g] [-r]
-                   [-R] [-u] [-U] [-F FUZZY] [-G] [-L] [-P] [-V]
-                   [directory]
+usage: cdhist [-h] [-i] [-l] [-m SIZE] [-n NUM_LINES] [-p] [-a]
+                         [-g] [-r] [-R] [-u] [-U] [-F FUZZY] [-G] [-L] [-P]
+                         [-V]
+                         [directory]
 
 A Linux shell directory stack "cd history" function.
 
