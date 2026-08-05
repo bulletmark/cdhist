@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 'A Linux shell directory stack "cd history" function.'
 
 from __future__ import annotations
@@ -6,6 +5,7 @@ from __future__ import annotations
 import os
 import sys
 from argparse import SUPPRESS, ArgumentParser, Namespace
+from contextlib import suppress
 from pathlib import Path
 
 from . import utils
@@ -97,10 +97,8 @@ def write_cd_hist(hist: list[str], maxsize: int, purge: bool) -> None:
     if purge:
         hist = [p for p in hist if os.path.exists(p)]
 
-    try:
+    with suppress(Exception):
         CDHISTFILE.write_text('\n'.join(hist[:maxsize]) + '\n')
-    except Exception:
-        pass
 
 
 def fetch_cd_hist(args: Namespace) -> list[str]:
@@ -140,7 +138,7 @@ def parse_args_cd(args: Namespace, hist: list[str]) -> Path | None:
         # may as well use it :)
         path = Path(hist[1]) if len(hist) > 1 else Path('-')
     elif arg := args.xargs.number:
-        path = utils.check_digit(arg, hist, reverse=True)
+        path = utils.check_digit(arg, hist)
     elif arg := args.xargs.search:
         path = utils.check_search(arg, [Path(d) for d in hist])
     elif args.list or args.xargs.prompt:
@@ -148,7 +146,7 @@ def parse_args_cd(args: Namespace, hist: list[str]) -> Path | None:
         if args.fuzzy and not args.list:
             # We don't car about maintaining $PWD as index 0 and $OLDPWD as index 1 in
             # fuzzy mode so can remove one if they are duplicates
-            if hist[0] == hist[1]:
+            if len(hist) > 1 and hist[0] == hist[1]:
                 hist_u = hist_u[1:]
 
             if not (arg := utils.fuzzy_prompt(args, hist_u)):
@@ -156,10 +154,10 @@ def parse_args_cd(args: Namespace, hist: list[str]) -> Path | None:
 
             path = Path(arg).expanduser()
         else:
-            if not (arg := utils.prompt(args, hist_u, reverse=True)):
+            if not (arg := utils.prompt(args, hist_u)):
                 return None
 
-            path = utils.check_digit(arg, hist, reverse=True) or utils.check_search(
+            path = utils.check_digit(arg, hist) or utils.check_search(
                 arg.lstrip('/'), [Path(d) for d in hist]
             )
     elif arg := args.directory:
@@ -170,19 +168,20 @@ def parse_args_cd(args: Namespace, hist: list[str]) -> Path | None:
     return path
 
 
-def main() -> str | int:
+def main() -> int:
     "Main code"
     # Main returns a status code:
     # 0 = Directory written to stdout. Calling script should cd to that
-    #     worktree directory.
-    # 1 = Error/message written to stderr (etc). Caller should just
-    #     quit.
-    # 2 = Caller should just quit.
+    #     directory.
+    # 1 = Error/message written to stderr via sys.exit(). Calling script should just
+    #     quit with exit code 1.
+    # 2 = Caller should silently quit and exit with code 0.
 
     # Parse arguments
     opt = ArgumentParser(description=__doc__, add_help=False)
     opt.add_argument('-h', '--help', action='store_true', help='show help/usage')
     opt.add_argument('-_', action='store_true', help=SUPPRESS)
+    opt.add_argument('-g', '--git', action='store_true', help=SUPPRESS)
     opt.add_argument(
         '-i',
         '--init',
@@ -221,44 +220,20 @@ def main() -> str | int:
         help='always purge non-existent directories every write',
     )
     opt.add_argument(
-        '-g', '--git', action='store_true', help='show git worktree directories instead'
-    )
-    opt.add_argument(
-        '-r',
-        '--git-relative',
-        action='store_true',
-        help='show relative git worktree paths instead of absolute',
-    )
-    opt.add_argument(
-        '-R',
-        '--no-git-relative',
-        action='store_false',
-        dest='git_relative',
-        help='do not show relative git worktree paths (default)',
-    )
-    opt.add_argument(
-        '-u',
+        '-U',
         '--no-user',
         action='store_true',
         help='do not substitute "~" for home directory',
     )
     opt.add_argument(
-        '-U',
-        '--user',
-        action='store_false',
-        dest='no_user',
-        help='do substitute "~" for home directory (default)',
+        '-u',
+        action='store_true',
+        help='toggle -U/--no-user option for one-off command only',
     )
     opt.add_argument(
         '-F',
         '--fuzzy',
         help='use specified fuzzy finder program to select directory from list',
-    )
-    opt.add_argument(
-        '-G',
-        '--no-fuzzy-git',
-        action='store_true',
-        help='do not use fuzzy finder for git worktree selection',
     )
     opt.add_argument(
         '-L',
@@ -279,8 +254,7 @@ def main() -> str | int:
     opt.add_argument(
         'directory',
         nargs='?',
-        help='directory (or '
-        'branch for git worktree) to cd to, '
+        help='directory to cd to, '
         'or "--" to list history and prompt, '
         'or "-n" for n\'th entry in list '
         'or "-/<string>" to match for "string" in dir',
@@ -292,70 +266,84 @@ def main() -> str | int:
     # Parse the rest of the arguments
     args = opt.parse_args()
 
+    if args.u:
+        args.no_user = not args.no_user
+
+    if args.git:
+        sys.exit(
+            f'The -g/--git option for navigating git worktrees is no longer supported by {PROG}.\n'
+            'Use https://github.com/bulletmark/worktree-aid instead.'
+        )
+
+    if args._:
+        try:
+            args._stdout = open('/dev/tty', 'w')
+        except Exception as e:
+            sys.exit(f'error: can not write to terminal in shell function mode: {e}')
+
+        shell_return = 2
+    else:
+        args._stdout = sys.stdout
+        shell_return = 0
+
     if args.help:
-        return opt.format_help().strip()
+        opt.print_help(args._stdout)
+        return shell_return
 
     if args.version:
         from importlib import metadata
 
-        pkg = Path(sys.argv[0]).stem.replace('-', '_')
         try:
-            version = metadata.version(pkg)
+            version = metadata.version(PROG)
         except Exception:
             version = '?'
 
-        if args._:
-            return f'Must invoke using "{PROG}" to output version.'
-
-        print(version)
-        return 0
+        print(version, file=args._stdout)
+        return shell_return
 
     # Just output shell init code if asked
     if args.init:
         if args._:
-            return f'Must invoke using "{PROG}" to output shell initialization code.'
+            sys.exit(f'Must invoke using "{PROG}" to output shell initialization code.')
 
         print(init_code(args))
-        return 0
+        return shell_return
 
     hist = fetch_cd_hist(args)
 
     if args.purge:
         write_cd_hist(hist, args.size, True)
-        return 2 if args._ else 0
+        return shell_return
 
     args.xargs = xargs
-
-    if args.git:
-        from . import git_worktree
-
-        path = git_worktree.parse_args(args)
-    else:
-        path = parse_args_cd(args, hist)
-
-    if not path:
-        return 1
+    if not (path := parse_args_cd(args, hist)):
+        return shell_return
 
     # Ensure directory is valid before we try and cd to it
     if not path.exists():
-        return f'"{path}" does not exist.'
+        sys.exit(f'"{path}" does not exist.')
     if not path.is_dir():
-        return f'"{path}" is not a directory.'
+        sys.exit(f'"{path}" is not a directory.')
+
     try:
         any(path.iterdir())
     except Exception:
-        return f'"{path}" is not accessible.'
+        sys.exit(f'"{path}" is not accessible.')
 
     if args.follow_physical:
         try:
             path = path.resolve()
         except Exception:
-            return f'"{path}" can not be resolved.'
+            sys.exit(f'"{path}" can not be resolved.')
 
     pathstr = str(path)
     newhist = [pathstr] + [p for p in hist if p != pathstr]
     write_cd_hist(newhist, args.size, args.purge_always)
     print(pathstr)
+
+    if args._:
+        args._stdout.close()
+
     return 0
 
 

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 "Misc utility functions for cdhist"
 
 from __future__ import annotations
@@ -23,52 +22,51 @@ def unexpanduser(path: str | Path) -> str:
 
 
 def fuzzy_prompt(args: Namespace, dirlist: list[str]) -> str | None:
-    res = subprocess.run(
-        shlex.split(args.fuzzy),
-        input='\n'.join(dirlist),
-        stdout=subprocess.PIPE,
-        text=True,
-    )
+    try:
+        res = subprocess.run(
+            shlex.split(args.fuzzy),
+            input='\n'.join(dirlist),
+            stdout=subprocess.PIPE,
+            text=True,
+        )
+    except Exception as e:
+        sys.exit(f'Error running fuzzy finder: {e}')
 
-    if res.returncode != 0:
-        return None
-
-    return res.stdout.strip()
+    return res.stdout.strip() if res.returncode == 0 else None
 
 
-def prompt(args: Namespace, dirlist: list[str], *, reverse: bool = False) -> str | None:
+def prompt(args: Namespace, dirlist: list[str]) -> str | None:
     "Present list of dirs to user and prompt for selection"
     if not dirlist:
         sys.exit('fatal: no directories')
 
-    with open('/dev/tty', 'w') as tty:
-        num = args.num_lines
+    num = args.num_lines
 
-        if 0 <= num < len(dirlist):
-            dirlist = dirlist[:num] if reverse else dirlist[len(dirlist) - num :]
-        else:
-            num = len(dirlist)
+    if 0 <= num < len(dirlist):
+        dirlist = dirlist[:num]
+    else:
+        num = len(dirlist)
 
-        # List the worktrees
-        for x, line in enumerate(reversed(dirlist) if reverse else dirlist, 1):
-            n = num - x
-            tty.write(f'{n:3} {line}\n')
+    # List the directories
+    for x, line in enumerate(reversed(dirlist)):
+        n = num - x - 1
+        args._stdout.write(f'{n:3} {line}\n')
 
-        if args.list:
-            return None
+    if args.list:
+        return None
 
-        # Prompt for index
-        tty.write('Select index [or <enter> to quit]: ')
-        tty.flush()
-        try:
-            ans = sys.stdin.readline().strip()
-        except KeyboardInterrupt:
-            return None
+    # Prompt for index
+    args._stdout.write('Select index [or <enter> to quit]: ')
+    args._stdout.flush()
+    try:
+        ans = sys.stdin.readline().strip()
+    except KeyboardInterrupt:
+        return None
 
     return ans
 
 
-def check_digit(arg: str, dirlist: list[str], *, reverse: bool = False):
+def check_digit(arg: str, dirlist: list[str]) -> Path | None:
     "Check if arg is number and then return indexed entry in dirlist"
     if not arg.isdigit():
         return None
@@ -76,9 +74,6 @@ def check_digit(arg: str, dirlist: list[str], *, reverse: bool = False):
     num = int(arg)
     if num < 0 or num >= len(dirlist):
         sys.exit(f'Index "{num}" out of range.')
-
-    if not reverse:
-        num = len(dirlist) - num - 1
 
     return Path(dirlist[num])
 
@@ -104,9 +99,8 @@ def check_search(arg: str, dirlist: list[Path]) -> Path | None:
                 if not match_start:
                     if name.startswith(arg):
                         match_start = path
-                    elif not match_any:
-                        if arg in name:
-                            match_any = path
+                    elif not match_any and arg in name:
+                        match_any = path
 
         # Did not find a full match at this level. If we found a partial
         # match at the start then return that, else if we found a match
@@ -118,5 +112,3 @@ def check_search(arg: str, dirlist: list[Path]) -> Path | None:
 
         if complete:
             sys.exit(f'No match on "{arg}".')
-
-    return None

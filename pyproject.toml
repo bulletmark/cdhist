@@ -8,7 +8,7 @@ description = "Program to provide a Linux cd history directory stack"
 readme = "README.md"
 license = "GPL-3.0-or-later"
 requires-python = ">=3.8"
-keywords = ["bash", "zsh", "cd", "fzf", "git", "worktree"]
+keywords = ["bash", "zsh", "cd", "fzf"]
 classifiers = [
   "Programming Language :: Python :: 3",
 ]
@@ -27,16 +27,10 @@ cdhist = "cdhist.main:main"
 [tool.setuptools_scm]
 version_scheme = "post-release"
 
-[tool.mypy]
-implicit_optional = true
-no_strict_optional = true
-warn_no_return = false
-allow_untyped_globals = true
-allow_redefinition = true
-ignore_missing_imports = true
-
 [tool.ruff.format]
 quote-style = "single"
-skip-magic-trailing-comma = true
+
+[tool.ruff.lint]
+ignore = ["SIM115", "SIM905", "BLE001", "PLW1510"]
 
 # vim:se sw=2:
