@@ -3,12 +3,21 @@
 from __future__ import annotations
 
 import os
+import shlex
+import subprocess
 import sys
 from argparse import SUPPRESS, ArgumentParser, Namespace
 from contextlib import suppress
 from pathlib import Path
 
-from . import utils
+HOME = Path.home()
+
+# Following is default installed command name but you can change it
+# using a command line option
+DEFCMD = 'cd'
+
+PROG = Path(__file__).parent.stem
+CDHISTFILE = HOME / '.cd_history'
 
 # Following is template for the shell code injected into your session
 SHELLCODE = """
@@ -28,12 +37,24 @@ SHELLCODE = """
 }
 """
 
-# Following is default installed command name but you can change it
-# using a command line option
-DEFCMD = 'cd'
 
-PROG = Path(__file__).parent.stem
-CDHISTFILE = utils.HOME / '.cd_history'
+def init_code(args: Namespace) -> str:
+    "Return shell init code as string"
+    from string import Template
+
+    # We need to change the template delimiter because the standard
+    # delimiter "$" is too common in regular shell code .
+    class CTemplate(Template):
+        delimiter = '!'
+
+    cmd = args.directory or DEFCMD
+    prog = sys.argv[0]
+    arglist = cmd.split(maxsplit=1)
+    if len(arglist) > 1:
+        cmd, opts = arglist
+        prog += f' {opts}'
+
+    return CTemplate(SHELLCODE.strip()).substitute(cmd=cmd, prog=prog)
 
 
 class Xargs:
@@ -70,23 +91,107 @@ class Xargs:
         del argv[-1]
 
 
-def init_code(args: Namespace) -> str:
-    "Return shell init code as string"
-    from string import Template
+def unexpanduser(path: str | Path) -> str:
+    "Return path name, with $HOME replaced by ~ (opposite of Path.expanduser())"
+    ppath = Path(path)
 
-    # We need to change the template delimiter because the standard
-    # delimiter "$" is too common in regular shell code .
-    class CTemplate(Template):
-        delimiter = '!'
+    if ppath.parts[: len(HOME.parts)] != HOME.parts:
+        return str(path)
 
-    cmd = args.directory or DEFCMD
-    prog = sys.argv[0]
-    arglist = cmd.split(maxsplit=1)
-    if len(arglist) > 1:
-        cmd, opts = arglist
-        prog += f' {opts}'
+    return str(Path('~', *ppath.parts[len(HOME.parts) :]))
 
-    return CTemplate(SHELLCODE.strip()).substitute(cmd=cmd, prog=prog)
+
+def fuzzy_prompt(args: Namespace, dirlist: list[str]) -> str | None:
+    try:
+        res = subprocess.run(
+            shlex.split(args.fuzzy),
+            input='\n'.join(dirlist),
+            stdout=subprocess.PIPE,
+            text=True,
+        )
+    except Exception as e:
+        sys.exit(f'Error running fuzzy finder: {e}')
+
+    return res.stdout.strip() if res.returncode == 0 else None
+
+
+def prompt(args: Namespace, dirlist: list[str]) -> str | None:
+    "Present list of dirs to user and prompt for selection"
+    if not dirlist:
+        sys.exit('fatal: no directories')
+
+    num = args.num_lines
+
+    if 0 <= num < len(dirlist):
+        dirlist = dirlist[:num]
+    else:
+        num = len(dirlist)
+
+    # List the directories
+    for x, line in enumerate(reversed(dirlist)):
+        n = num - x - 1
+        args._stdout.write(f'{n:3} {line}\n')
+
+    if args.list:
+        return None
+
+    # Prompt for index
+    args._stdout.write('Select index [or <enter> to quit]: ')
+    args._stdout.flush()
+    try:
+        ans = sys.stdin.readline().strip()
+    except KeyboardInterrupt:
+        return None
+
+    return ans
+
+
+def check_digit(arg: str, dirlist: list[str]) -> Path | None:
+    "Check if arg is number and then return indexed entry in dirlist"
+    if not arg.isdigit():
+        return None
+
+    num = int(arg)
+    if num < 0 or num >= len(dirlist):
+        sys.exit(f'Index "{num}" out of range.')
+
+    return Path(dirlist[num])
+
+
+def check_search(arg: str, dirlist: list[Path]) -> Path | None:
+    "Search for arg in given dirlist"
+    from itertools import count
+
+    # Perform a somewhat heuristic search. Iterate through all dirs and
+    # look for match in final dir, then go up a level if no match and
+    # iterate again. Always favor a full match then a partial start
+    # match then a match anywhere.
+    for level in count(1):
+        complete = True
+        match_start = match_any = None
+        for path in dirlist:
+            if len(path.parts) >= level:
+                name = path.parts[-level]
+                if name == arg:
+                    return path
+
+                complete = False
+                if not match_start:
+                    if name.startswith(arg):
+                        match_start = path
+                    elif not match_any and arg in name:
+                        match_any = path
+
+        # Did not find a full match at this level. If we found a partial
+        # match at the start then return that, else if we found a match
+        # anywhere then return that.
+        if match_start:
+            return match_start
+        elif match_any:
+            return match_any
+
+        if complete:
+            sys.exit(f'No match on "{arg}".')
 
 
 def write_cd_hist(hist: list[str], maxsize: int, purge: bool) -> None:
@@ -138,32 +243,32 @@ def parse_args_cd(args: Namespace, hist: list[str]) -> Path | None:
         # may as well use it :)
         path = Path(hist[1]) if len(hist) > 1 else Path('-')
     elif arg := args.xargs.number:
-        path = utils.check_digit(arg, hist)
+        path = check_digit(arg, hist)
     elif arg := args.xargs.search:
-        path = utils.check_search(arg, [Path(d) for d in hist])
+        path = check_search(arg, [Path(d) for d in hist])
     elif args.list or args.xargs.prompt:
-        hist_u = hist if args.no_user else [utils.unexpanduser(d) for d in hist]
+        hist_u = hist if args.no_user else [unexpanduser(d) for d in hist]
         if args.fuzzy and not args.list:
             # We don't car about maintaining $PWD as index 0 and $OLDPWD as index 1 in
             # fuzzy mode so can remove one if they are duplicates
             if len(hist) > 1 and hist[0] == hist[1]:
                 hist_u = hist_u[1:]
 
-            if not (arg := utils.fuzzy_prompt(args, hist_u)):
+            if not (arg := fuzzy_prompt(args, hist_u)):
                 return None
 
             path = Path(arg).expanduser()
         else:
-            if not (arg := utils.prompt(args, hist_u)):
+            if not (arg := prompt(args, hist_u)):
                 return None
 
-            path = utils.check_digit(arg, hist) or utils.check_search(
+            path = check_digit(arg, hist) or check_search(
                 arg.lstrip('/'), [Path(d) for d in hist]
             )
     elif arg := args.directory:
         path = Path(arg)
     else:
-        path = utils.HOME
+        path = HOME
 
     return path
 

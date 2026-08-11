@@ -9,9 +9,6 @@ readme = "README.md"
 license = "GPL-3.0-or-later"
 requires-python = ">=3.8"
 keywords = ["bash", "zsh", "cd", "fzf"]
-classifiers = [
-  "Programming Language :: Python :: 3",
-]
 dynamic = ["version"]
 
 [[project.authors]]
@@ -22,7 +19,7 @@ email = "mark.blakeney@bullet-systems.net"
 Homepage = "https://github.com/bulletmark/cdhist"
 
 [project.scripts]
-cdhist = "cdhist.main:main"
+cdhist = "cdhist:main"
 
 [tool.setuptools_scm]
 version_scheme = "post-release"
@@ -31,6 +28,6 @@ version_scheme = "post-release"
 quote-style = "single"
 
 [tool.ruff.lint]
-ignore = ["SIM115", "SIM905", "BLE001", "PLW1510"]
+ignore = ["SIM115", "SIM905", "BLE001", "PLW1510", "S110", "DTZ"]
 
 # vim:se sw=2:
