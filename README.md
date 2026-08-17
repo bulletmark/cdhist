@@ -255,9 +255,9 @@ between, adding, and removing [git worktrees][worktree].
 Type `cd -h` to view the usage summary:
 
 ```
-usage: cd [-h] [-i] [-l] [-m SIZE] [-n NUM_LINES] [-p] [-a]
-                         [-U] [-u] [-F FUZZY] [-L] [-P] [-V]
-                         [directory]
+usage: cd [-h] [-i] [-l] [-m SIZE] [-n NUM_LINES] [-p] [-a] [-U] [-u]
+              [-F FUZZY] [-L] [-P] [-V]
+              [directory]
 
 A Linux shell directory stack "cd history" function.
 

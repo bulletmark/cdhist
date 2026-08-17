@@ -14,7 +14,7 @@ upload: build
   uv-publish
 
 doc:
-  update-readme-usage -A -S "s/cdhist/cd/g"
+  update-readme-usage -r cd
 
 format:
   ruff check --select I --fix {{PYFILES}} && ruff format {{PYFILES}}
