@@ -16,7 +16,7 @@ HOME = Path.home()
 # using a command line option
 DEFCMD = 'cd'
 
-PROG = Path(__file__).parent.stem
+PROG = Path(__file__).stem
 ENVVAR = '_' + PROG.upper()
 CDHISTFILE = HOME / '.cd_history'
 
@@ -366,6 +366,7 @@ def main() -> int:
         '-h', '--help', action='store_true', help='show help message and exit'
     )
     opt.add_argument('-g', '--git', action='store_true', help=SUPPRESS)
+    opt.add_argument('-_', action='store_true', help=SUPPRESS)
     opt.add_argument(
         'directory',
         nargs='?',
@@ -380,6 +381,9 @@ def main() -> int:
 
     # Parse the rest of the arguments
     args = opt.parse_args()
+
+    if args._:
+        sys.exit('You need to log out and back in to your shell for new cdhist.')
 
     if args.u:
         args.no_user = not args.no_user
