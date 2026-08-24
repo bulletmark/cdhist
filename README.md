@@ -255,8 +255,8 @@ between, adding, and removing [git worktrees][worktree].
 Type `cd -h` to view the usage summary:
 
 ```
-usage: cd [-h] [-i] [-l] [-m SIZE] [-n NUM_LINES] [-p] [-a] [-U] [-u]
-              [-F FUZZY] [-L] [-P] [-V]
+usage: cd [-i] [-l] [-m SIZE] [-n NUM_LINES] [-p] [-a] [-U] [-u]
+              [-F FUZZY] [-L] [-P] [-V] [-h]
               [directory]
 
 A Linux shell directory stack "cd history" function.
@@ -267,7 +267,6 @@ positional arguments:
                         to match for "string" in dir
 
 options:
-  -h, --help            show help/usage
   -i, --init            output shell initialization code. Optionally specify
                         alternative command name as argument, default="cd"
   -l, --list            just list directory history
@@ -283,7 +282,8 @@ options:
   -L, --follow-links    follow symbolic links (default=true)
   -P, --follow-physical
                         follow links to physical directory
-  -V, --version         just output cd version
+  -V, --version         show program version and exit
+  -h, --help            show help message and exit
 ```
 
 ## Limitations

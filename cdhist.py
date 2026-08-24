@@ -17,13 +17,15 @@ HOME = Path.home()
 DEFCMD = 'cd'
 
 PROG = Path(__file__).parent.stem
+ENVVAR = '_' + PROG.upper()
 CDHISTFILE = HOME / '.cd_history'
 
 # Following is template for the shell code injected into your session
 SHELLCODE = """
 !cmd() {
-    local d
-    d=$(!prog -_ "$@")
+    local !envvar=""
+    export !envvar
+    !envvar=$(!prog "$@")
     local r=$?
 
     if [ $r -ne 0 ]; then
@@ -33,7 +35,7 @@ SHELLCODE = """
         return $r
     fi
 
-    builtin cd -- "$d"
+    builtin cd -- "$!envvar"
 }
 """
 
@@ -54,7 +56,7 @@ def init_code(args: Namespace) -> str:
         cmd, opts = arglist
         prog += f' {opts}'
 
-    return CTemplate(SHELLCODE.strip()).substitute(cmd=cmd, prog=prog)
+    return CTemplate(SHELLCODE.strip()).substitute(envvar=ENVVAR, cmd=cmd, prog=prog)
 
 
 class Xargs:
@@ -282,11 +284,15 @@ def main() -> int:
     #     quit with exit code 1.
     # 2 = Caller should silently quit and exit with code 0.
 
+    # We need to determine if we are running in a shell function.
+    # Also, Python 3.14 added color help/usage output but has a bug when
+    # outputting to a device other than stdout, so we override auto-detection.
+    # See https://github.com/python/cpython/issues/156144
+    if (running_in_shell := ENVVAR in os.environ) and sys.version_info[:2] == (3, 14):
+        os.environ['FORCE_COLOR'] = '1'
+
     # Parse arguments
     opt = ArgumentParser(description=__doc__, add_help=False)
-    opt.add_argument('-h', '--help', action='store_true', help='show help/usage')
-    opt.add_argument('-_', action='store_true', help=SUPPRESS)
-    opt.add_argument('-g', '--git', action='store_true', help=SUPPRESS)
     opt.add_argument(
         '-i',
         '--init',
@@ -354,8 +360,12 @@ def main() -> int:
         help='follow links to physical directory',
     )
     opt.add_argument(
-        '-V', '--version', action='store_true', help=f'just output {PROG} version'
+        '-V', '--version', action='store_true', help='show program version and exit'
     )
+    opt.add_argument(
+        '-h', '--help', action='store_true', help='show help message and exit'
+    )
+    opt.add_argument('-g', '--git', action='store_true', help=SUPPRESS)
     opt.add_argument(
         'directory',
         nargs='?',
@@ -380,7 +390,7 @@ def main() -> int:
             'Use https://github.com/bulletmark/worktree-aid instead.'
         )
 
-    if args._:
+    if running_in_shell:
         try:
             args._stdout = open('/dev/tty', 'w')
         except Exception as e:
@@ -408,7 +418,7 @@ def main() -> int:
 
     # Just output shell init code if asked
     if args.init:
-        if args._:
+        if running_in_shell:
             sys.exit(f'Must invoke using "{PROG}" to output shell initialization code.')
 
         print(init_code(args))
@@ -446,7 +456,7 @@ def main() -> int:
     write_cd_hist(newhist, args.size, args.purge_always)
     print(pathstr)
 
-    if args._:
+    if running_in_shell:
         args._stdout.close()
 
     return 0
