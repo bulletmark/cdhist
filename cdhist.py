@@ -331,15 +331,12 @@ def main() -> int:
         help='always purge non-existent directories every write',
     )
     opt.add_argument(
-        '-U',
-        '--no-user',
-        action='store_true',
-        help='do not substitute "~" for home directory',
-    )
-    opt.add_argument(
         '-u',
-        action='store_true',
-        help='toggle -U/--no-user option for one-off command only',
+        '--no-user',
+        action='count',
+        default=0,
+        help='toggle substitution of "~" for user home directory, default is to substitute. '
+        'Can be specified on command line again to toggle your default setting.',
     )
     opt.add_argument(
         '-F',
@@ -365,8 +362,6 @@ def main() -> int:
     opt.add_argument(
         '-h', '--help', action='store_true', help='show help message and exit'
     )
-    opt.add_argument('-g', '--git', action='store_true', help=SUPPRESS)
-    opt.add_argument('-_', action='store_true', help=SUPPRESS)
     opt.add_argument(
         'directory',
         nargs='?',
@@ -375,6 +370,11 @@ def main() -> int:
         'or "-n" for n\'th entry in list '
         'or "-/<string>" to match for "string" in dir',
     )
+
+    # Following are hidden options for backward compatibility with old versions of cdhist
+    opt.add_argument('-U', action='count', dest='no_user', help=SUPPRESS)
+    opt.add_argument('-g', '--git', action='store_true', help=SUPPRESS)
+    opt.add_argument('-_', action='store_true', help=SUPPRESS)
 
     # Preprocess and potentially remove the last argument
     xargs = Xargs()
@@ -385,14 +385,14 @@ def main() -> int:
     if args._:
         sys.exit('You need to log out and back in to your shell for new cdhist.')
 
-    if args.u:
-        args.no_user = not args.no_user
-
     if args.git:
         sys.exit(
             f'The -g/--git option for navigating git worktrees is no longer supported by {PROG}.\n'
             'Use https://github.com/bulletmark/worktree-aid instead.'
         )
+
+    # Determine final value of no_user when specified multiple times
+    args.no_user &= 1
 
     if running_in_shell:
         try:

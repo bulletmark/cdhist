@@ -255,8 +255,8 @@ between, adding, and removing [git worktrees][worktree].
 Type `cd -h` to view the usage summary:
 
 ```
-usage: cd [-i] [-l] [-m SIZE] [-n NUM_LINES] [-p] [-a] [-U] [-u]
-              [-F FUZZY] [-L] [-P] [-V] [-h]
+usage: cd [-i] [-l] [-m SIZE] [-n NUM_LINES] [-p] [-a] [-u] [-F FUZZY]
+              [-L] [-P] [-V] [-h]
               [directory]
 
 A Linux shell directory stack "cd history" function.
@@ -275,8 +275,9 @@ options:
                         limit output to specified number of lines
   -p, --purge           just purge non-existent directories from history
   -a, --purge-always    always purge non-existent directories every write
-  -U, --no-user         do not substitute "~" for home directory
-  -u                    toggle -U/--no-user option for one-off command only
+  -u, --no-user         toggle substitution of "~" for user home directory,
+                        default is to substitute. Can be specified on command
+                        line again to toggle your default setting.
   -F, --fuzzy FUZZY     use specified fuzzy finder program to select directory
                         from list
   -L, --follow-links    follow symbolic links (default=true)
