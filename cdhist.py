@@ -20,16 +20,18 @@ PROG = Path(__file__).stem
 ENVVAR = '_' + PROG.upper()
 CDHISTFILE = HOME / '.cd_history'
 
+QUIET_RETURN = 3  # Return code to indicate quiet exit from shell function
+
 # Following is template for the shell code injected into your session
 SHELLCODE = """
 !cmd() {
     local !envvar=""
     export !envvar
-    !envvar=$(!prog "$@")
+    !envvar=$("!prog"!args "$@")
     local r=$?
 
     if [ $r -ne 0 ]; then
-        if [ $r -eq 2 ]; then
+        if [ $r -eq !QUIET_RETURN ]; then
             return 0
         fi
         return $r
@@ -40,7 +42,7 @@ SHELLCODE = """
 """
 
 
-def init_code(args: Namespace) -> str:
+def init_code(cmd: str) -> str:
     "Return shell init code as string"
     from string import Template
 
@@ -49,14 +51,16 @@ def init_code(args: Namespace) -> str:
     class CTemplate(Template):
         delimiter = '!'
 
-    cmd = args.directory or DEFCMD
-    prog = sys.argv[0]
     arglist = cmd.split(maxsplit=1)
     if len(arglist) > 1:
         cmd, opts = arglist
-        prog += f' {opts}'
+        args = ' ' + opts
+    else:
+        args = ''
 
-    return CTemplate(SHELLCODE.strip()).substitute(envvar=ENVVAR, cmd=cmd, prog=prog)
+    return CTemplate(SHELLCODE.strip()).substitute(
+        envvar=ENVVAR, cmd=cmd, prog=sys.argv[0], args=args, QUIET_RETURN=QUIET_RETURN
+    )
 
 
 class Xargs:
@@ -282,7 +286,7 @@ def main() -> int:
     #     directory.
     # 1 = Error/message written to stderr via sys.exit(). Calling script should just
     #     quit with exit code 1.
-    # 2 = Caller should silently quit and exit with code 0.
+    # QUIET_RETURN = Caller should silently quit and exit with code 0.
 
     # We need to determine if we are running in a shell function.
     # Also, Python 3.14 added color help/usage output but has a bug when
@@ -400,7 +404,7 @@ def main() -> int:
         except Exception as e:
             sys.exit(f'error: can not write to terminal in shell function mode: {e}')
 
-        shell_return = 2
+        shell_return = QUIET_RETURN
     else:
         args._stdout = sys.stdout
         shell_return = 0
@@ -425,7 +429,7 @@ def main() -> int:
         if running_in_shell:
             sys.exit(f'Must invoke using "{PROG}" to output shell initialization code.')
 
-        print(init_code(args))
+        print(init_code(args.directory or DEFCMD))
         return shell_return
 
     hist = fetch_cd_hist(args)
