@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import shlex
+import string
 import subprocess
 import sys
 from argparse import SUPPRESS, ArgumentParser, Namespace
@@ -27,7 +28,7 @@ SHELLCODE = """
 !cmd() {
     local !envvar=""
     export !envvar
-    !envvar=$("!prog"!args "$@")
+    !envvar=$(!prog!args "$@")
     local r=$?
 
     if [ $r -ne 0 ]; then
@@ -42,13 +43,21 @@ SHELLCODE = """
 """
 
 
+def shell_func_name_valid(name: str) -> bool:
+    "Return True if shell function name is valid"
+    if not name or name[0] in string.digits:
+        return False
+
+    valids = set(string.ascii_letters + string.digits + '_')
+    return all(c in valids for c in name)
+
+
 def init_code(cmd: str) -> str:
     "Return shell init code as string"
-    from string import Template
 
     # We need to change the template delimiter because the standard
     # delimiter "$" is too common in regular shell code .
-    class CTemplate(Template):
+    class CTemplate(string.Template):
         delimiter = '!'
 
     arglist = cmd.split(maxsplit=1)
@@ -58,8 +67,15 @@ def init_code(cmd: str) -> str:
     else:
         args = ''
 
+    if not shell_func_name_valid(cmd):
+        sys.exit(f'error: invalid shell command name "{cmd}".')
+
     return CTemplate(SHELLCODE.strip()).substitute(
-        envvar=ENVVAR, cmd=cmd, prog=sys.argv[0], args=args, QUIET_RETURN=QUIET_RETURN
+        envvar=ENVVAR,
+        cmd=cmd,
+        prog=shlex.quote(sys.argv[0]),
+        args=args,
+        QUIET_RETURN=QUIET_RETURN,
     )
 
 
@@ -81,7 +97,7 @@ class Xargs:
 
         last_arg = argv[-1]
 
-        if last_arg[0] != '-':
+        if not last_arg or last_arg[0] != '-':
             return
         elif len(last_arg) == 1:
             self.previous = True
@@ -109,16 +125,20 @@ def unexpanduser(path: str | Path) -> str:
 
 def fuzzy_prompt(args: Namespace, dirlist: list[str]) -> str | None:
     try:
+        cmd = shlex.split(args.fuzzy)
+    except Exception as e:
+        sys.exit(f'Error parsing fuzzy cmd "{args.fuzzy}": {e}')
+
+    try:
         res = subprocess.run(
-            shlex.split(args.fuzzy),
-            input='\n'.join(dirlist),
-            stdout=subprocess.PIPE,
-            text=True,
+            cmd, input='\n'.join(dirlist), stdout=subprocess.PIPE, text=True
         )
     except Exception as e:
         sys.exit(f'Error running fuzzy finder: {e}')
 
-    return res.stdout.strip() if res.returncode == 0 else None
+    # Remove the line terminator written by the finder, but preserve spaces
+    # because they may be part of a valid directory name.
+    return res.stdout.rstrip('\r\n') if res.returncode == 0 else None
 
 
 def prompt(args: Namespace, dirlist: list[str]) -> str | None:
@@ -271,8 +291,10 @@ def parse_args_cd(args: Namespace, hist: list[str]) -> Path | None:
             path = check_digit(arg, hist) or check_search(
                 arg.lstrip('/'), [Path(d) for d in hist]
             )
-    elif arg := args.directory:
-        path = Path(arg)
+    elif args.directory is not None:
+        if not args.directory:
+            sys.exit('"" does not exist.')
+        path = Path(args.directory)
     else:
         path = HOME
 
