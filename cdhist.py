@@ -226,7 +226,7 @@ def write_cd_hist(hist: list[str], maxsize: int, purge: bool) -> None:
     os.umask(0o177)
 
     if purge:
-        hist = [p for p in hist if os.path.exists(p)]
+        hist = [p for p in hist if os.path.isdir(p)]
 
     with suppress(Exception):
         CDHISTFILE.write_text('\n'.join(hist[:maxsize]) + '\n')
@@ -311,10 +311,12 @@ def main() -> int:
     # QUIET_RETURN = Caller should silently quit and exit with code 0.
 
     # We need to determine if we are running in a shell function.
-    # Also, Python 3.14 added color help/usage output but has a bug when
+    running_in_shell = ENVVAR in os.environ
+
+    # Python 3.14 added color help/usage output but has a bug when
     # outputting to a device other than stdout, so we override auto-detection.
     # See https://github.com/python/cpython/issues/156144
-    if (running_in_shell := ENVVAR in os.environ) and sys.version_info[:2] == (3, 14):
+    if running_in_shell and sys.version_info[:2] == (3, 14):
         os.environ['FORCE_COLOR'] = '1'
 
     # Parse arguments
@@ -465,10 +467,8 @@ def main() -> int:
         return shell_return
 
     # Ensure directory is valid before we try and cd to it
-    if not path.exists():
-        sys.exit(f'"{path}" does not exist.')
     if not path.is_dir():
-        sys.exit(f'"{path}" is not a directory.')
+        sys.exit(f'"{path}" does not exist or is not a directory.')
 
     try:
         any(path.iterdir())
