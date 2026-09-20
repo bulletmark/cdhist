@@ -113,14 +113,15 @@ class Xargs:
         del argv[-1]
 
 
-def unexpanduser(path: str | Path) -> str:
+def unexpanduser(path: str | Path) -> Path:
     "Return path name, with $HOME replaced by ~ (opposite of Path.expanduser())"
-    ppath = Path(path)
+    path = Path(path)
+    startlen = len(hparts := HOME.parts)
+    parts = path.parts
+    if parts[:startlen] == hparts:
+        path = Path('~', *parts[startlen:])
 
-    if ppath.parts[: len(HOME.parts)] != HOME.parts:
-        return str(path)
-
-    return str(Path('~', *ppath.parts[len(HOME.parts) :]))
+    return path
 
 
 def fuzzy_prompt(args: Namespace, dirlist: list[str]) -> str | None:
@@ -273,7 +274,7 @@ def parse_args_cd(args: Namespace, hist: list[str]) -> Path | None:
     elif arg := args.xargs.search:
         path = check_search(arg, [Path(d) for d in hist])
     elif args.list or args.xargs.prompt:
-        hist_u = hist if args.no_user else [unexpanduser(d) for d in hist]
+        hist_u = hist if args.no_user else [str(unexpanduser(d)) for d in hist]
         if args.fuzzy and not args.list:
             # We don't car about maintaining $PWD as index 0 and $OLDPWD as index 1 in
             # fuzzy mode so can remove one if they are duplicates
