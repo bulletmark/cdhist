@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
+import sys
+
+if sys.version_info >= (3, 15):
+    sys.set_lazy_imports('all')
+
 import os
 import shlex
 import string
-import subprocess
-import sys
 from argparse import SUPPRESS, ArgumentParser, Namespace
-from contextlib import suppress
 from pathlib import Path
 
 HOME = Path.home()
@@ -125,6 +127,8 @@ def unexpanduser(path: str | Path) -> Path:
 
 
 def fuzzy_prompt(args: Namespace, dirlist: list[str]) -> str | None:
+    import subprocess
+
     try:
         cmd = shlex.split(args.fuzzy)
     except Exception as e:
@@ -223,6 +227,8 @@ def check_search(arg: str, dirlist: list[Path]) -> Path | None:
 
 def write_cd_hist(hist: list[str], maxsize: int, purge: bool) -> None:
     "Write the passed history stack to the history file"
+    from contextlib import suppress
+
     # Ensure private history file
     os.umask(0o177)
 

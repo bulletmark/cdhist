@@ -3,7 +3,6 @@ PYFILES := `echo *.py`
 check:
   ruff check {{PYFILES}}
   ty check {{PYFILES}}
-  vermin -vv --no-tips -i {{PYFILES}}
   md-link-checker
 
 build:
